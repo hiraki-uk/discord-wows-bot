@@ -64,8 +64,8 @@ class Botdb_manager(commands.Cog):
 		else:
 			self.logger.debug('Sending posts.')
 			# debug channel is 618...
-			channel = self.bot.get_channel(618259750546702336)
-			# channel = self.bot.get_channel(485841872347070484)
+			# channel = self.bot.get_channel(618259750546702336)
+			channel = self.bot.get_channel(485841872347070484)
 			for i in range(self.latest_id + 1, latest_id_db + 1):
 				self.logger.debug(f'i is {i}, id is {self.latest_id}, latest_id_db is {latest_id_db}')
 				embed = self._get_embed(i)
