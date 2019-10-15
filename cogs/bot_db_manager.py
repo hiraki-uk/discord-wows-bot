@@ -47,8 +47,9 @@ def _create_text(res):
 		f'latest id : {res[0]}\n' \
 		f'source : "{res[1]}"\n' \
 		f'title : "{res[2]}"\n' \
-		f'url : "{res[3]}"\n' \
-		f'img : "{res[4]}"' \
+		f'description : "{res[3]}"\n' \
+		f'url : "{res[4]}"\n' \
+		f'img : "{res[5]}"' \
 		'```'
 
 
