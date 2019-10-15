@@ -126,7 +126,7 @@ class Roles(commands.Cog):
 
 
 
-	@commands.Cogs.listener()
+	@commands.Cog.listener()
 	async def on_member_update(self, before, after):
 		"""
 		When member was updated, 
