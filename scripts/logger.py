@@ -18,7 +18,7 @@ class Logger:
 		handler = handlers.RotatingFileHandler(filename='artesia_bot.log',
 												encoding='utf-8',
 												maxBytes=1048576,
-												backupCount=3)
+												backupCount=1)
 		handler.setLevel(DEBUG)
 		handler.setFormatter(formatter)
 		self.logger.addHandler(handler)

@@ -12,7 +12,7 @@ from discord import Activity, ActivityType
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 
-from cogs.bot_db_manager import Botdb_manager
+from cogs.bot_db_manager import Botdb_checker, Botdb_manager
 from cogs.cogs import Cogs
 from cogs.listeners import Listener
 from cogs.roles import Roles
@@ -47,6 +47,8 @@ def bot_setup():
 			VoiceChannel(bot),
 			Weather(bot),
 			# Botdb_manager(bot, db_path)
+			Botdb_checker(db_path)
+
 	)
 	return bot, key
 

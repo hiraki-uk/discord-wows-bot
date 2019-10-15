@@ -10,17 +10,58 @@ try:
 except:
 	from logging import Logger
 
+class Botdb_checker(commands.Cog):
+	""" Handles the interaction between you and db. """
+	__slots__ = ('logger', 'database')
+	def __init__(self, db_path):
+		self.logger = Logger(__name__)
+		self.database = Database(db_path)
+
+	
+	# send latest_id
+	@commands.command()
+	async def db(self, ctx, numbers=10):
+		""" temporary command for smooth interactions with database. """
+		if not isinstance(numbers, int):
+			await ctx.send(f'tell me how many to show!')
+			return
+		elif not 0 < numbers and not numbers < 51:
+			await ctx.send(f'give me a number from 1 to 50!')
+			return
+		
+		res = self.database.fetchone('SELECT id FROM wowsnews ORDER BY id DESC')
+		latestid = res[0]
+
+		for i in range(latestid - numbers + 1, latestid + 1):
+			res = self.database.fetchone('SELECT * FROM wowsnews WHERE id == ?', (i,))
+			await ctx.send(_create_text(res))
+
+
+def _create_text(res):
+	"""
+	create nice looking text from res in database.
+	"""
+	if not res:
+		return ''
+	return '```json\n' \
+		f'latest id : {res[0]}\n' \
+		f'source : "{res[1]}"\n' \
+		f'title : "{res[2]}"\n' \
+		f'url : "{res[3]}"\n' \
+		f'img : "{res[4]}"' \
+		'```'
 
 
 class Botdb_manager(commands.Cog):
 	"""	Manages bot related db. """
 	__slots__ = ('bot', 'logger', 'database', 'latest_id')
-	def __init__(self, bot, db_path, logger=None):
+	def __init__(self, bot, db_path):
 		self.bot = bot
-		self.logger = Logger(__name__) if logger is None else logger
+		self.logger = Logger(__name__)
 		self.database = Database(db_path)
 		self.database_task.start()
 		self.latest_id = 0
+
 
 	# send latest_id
 	@commands.command()
