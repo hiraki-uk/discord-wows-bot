@@ -125,3 +125,4 @@ dmypy.json
 # personal files to ignore
 .envcopy
 .vscode/*
+temp.py

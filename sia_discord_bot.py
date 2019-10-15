@@ -41,12 +41,12 @@ def bot_setup():
 		bot = commands.Bot(command_prefix=prefix, activity=activity)
 	add_cogs(bot,
 			Cogs(bot),
-			Roles(bot),
+			# Roles(bot),
 			Listener(bot),
 			Shitposting(bot),
 			VoiceChannel(bot),
 			Weather(bot),
-			Botdb_manager(bot, db_path)
+			# Botdb_manager(bot, db_path)
 	)
 	return bot, key
 

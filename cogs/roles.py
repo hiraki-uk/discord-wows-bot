@@ -1,14 +1,17 @@
 import discord
 import matplotlib
+from discord.ext import commands, tasks
+
 from scripts.logger import Logger
-from discord.ext import commands, tasks 
+from scripts.scripts import get_guild
 
 
 class Roles(commands.Cog):
-	__slots__ = ('logger',)
+	__slots__ = ('bot', 'logger')
 
-	def __init__(self, logger=None):
-		self.logger = Logger(__name__) if logger is None else logger
+	def __init__(self, bot, logger):
+		self.bot = bot
+		self.logger = Logger(__name__)
 
 
 	@commands.group()
@@ -91,3 +94,40 @@ class Roles(commands.Cog):
 			if role.mentionable:
 				await role.edit(mentionable=False)
 		await ctx.send(':thumbsup:')
+
+
+	@commands.Cog.listener()
+	async def on_ready(self):
+		# get all members as list
+		members = get_guild(self.bot).members
+		self.logger.debug(f'{len(members)} members found.')
+
+		# add or remove game activity
+		for member in members:
+			activity = member.activities
+			activity_role_now = get_activity_role_now(member)
+
+			# do nothing 
+			if not activity and not activity_role_now:
+				self.logger.debug(f'no activity found for {member.nick}.')
+				continue
+			# has roles on but not playing anything
+			elif not activity and activity_role_now:
+				remove_activity_role(member)
+			# has roles on and playing something
+			elif activity and activity_role_now:
+				remove_activity_role(member)
+				give_activity_role(member)
+			# no roles but playing something
+			else:
+				give_activity_role(member)
+			
+			self.logger.debug(f'activity found for {member.nick}.')
+
+
+
+	@commands.Cogs.listener()
+	async def on_member_update(self, before, after):
+		"""
+		When member was updated, 
+		"""
