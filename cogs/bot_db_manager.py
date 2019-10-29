@@ -10,6 +10,7 @@ try:
 except:
 	from logging import Logger
 
+
 class Botdb_checker(commands.Cog):
 	""" Handles the interaction between you and db. """
 	__slots__ = ('logger', 'database')

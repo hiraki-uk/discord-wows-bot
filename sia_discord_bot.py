@@ -48,7 +48,6 @@ def bot_setup():
 			Weather(bot),
 			# Botdb_manager(bot, db_path)
 			Botdb_checker(db_path)
-
 	)
 	return bot, key
 
