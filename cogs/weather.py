@@ -8,6 +8,9 @@ from discord.ext import commands, tasks
 from scripts.logger import Logger
 
 
+tz = datetime.timezone(datetime.timedelta(hours=9))
+
+
 class Scrape_weather:
 	def __init__(self):
 		pass
@@ -87,8 +90,8 @@ class Weather(commands.Cog):
 
 	@tasks.loop(seconds=50)
 	async def weather_task(self):
-		now = datetime.datetime.now()
-		if not (now.hour == 22 and now.minute == 30):
+		now = datetime.datetime.now(tzinfo=tz)
+		if not (now.hour == 6 and now.minute == 30):
 			return
 		if self.last_sent_date == datetime.datetime.now().date():
 			return
