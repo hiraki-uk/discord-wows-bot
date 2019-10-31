@@ -93,10 +93,10 @@ class Weather(commands.Cog):
 		now = datetime.datetime.now(tzinfo=tz)
 		if not (now.hour == 6 and now.minute == 30):
 			return
-		if self.last_sent_date == datetime.datetime.now(tzinfo=tz).date():
+		if self.last_sent_date == now.date():
 			return
 		else:
-			self.last_sent_date = datetime.datetime.now(tzinfo=tz).date()
+			self.last_sent_date = now.date()
 			
 		scraper = Scrape_weather()
 		e, c = scraper.embed_builder()
