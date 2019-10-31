@@ -90,7 +90,7 @@ class Weather(commands.Cog):
 
 	@tasks.loop(seconds=50)
 	async def weather_task(self):
-		now = datetime.datetime.now(tzinfo=tz)
+		now = datetime.datetime.now(tz=tz)
 		if not (now.hour == 6 and now.minute == 30):
 			return
 		if self.last_sent_date == now.date():
