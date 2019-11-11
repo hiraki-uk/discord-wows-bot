@@ -17,6 +17,7 @@ from cogs.cogs import Cogs
 from cogs.listeners import Listener
 from cogs.roles import Roles
 from cogs.shitposting import Shitposting
+from cogs.twitter_manager import Twitter_manager
 from cogs.vc import VoiceChannel
 from cogs.weather import Weather
 from scripts.logger import Logger
@@ -46,6 +47,7 @@ def bot_setup():
 			Shitposting(bot),
 			VoiceChannel(bot),
 			Weather(bot),
+			Twitter_manager(bot),
 			# Botdb_manager(bot, db_path)
 			Botdb_checker(db_path)
 	)
