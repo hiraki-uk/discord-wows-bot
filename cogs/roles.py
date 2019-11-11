@@ -96,6 +96,10 @@ class Roles(commands.Cog):
 		await ctx.send(':thumbsup:')
 
 
+	"""
+	removed roles.on_ready as duplication of 
+	methods may be not good
+	"""
 	@commands.Cog.listener()
 	async def on_ready(self):
 		# get all members as list
