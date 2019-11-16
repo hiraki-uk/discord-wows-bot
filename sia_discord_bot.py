@@ -17,7 +17,7 @@ from cogs.cogs import Cogs
 from cogs.listeners import Listener
 from cogs.roles import Roles
 from cogs.shitposting import Shitposting
-from cogs.temp import NewRoles
+from cogs.newroles import NewRoles
 from cogs.twitter_manager import Twitter_manager
 from cogs.vc import VoiceChannel
 from cogs.weather import Weather
