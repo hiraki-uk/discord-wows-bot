@@ -78,13 +78,13 @@ class Roles(commands.Cog):
 		await ctx.send('はい、終わり！')
 
 
-	@roles.command()
-	async def hoist(self, ctx):
-		""" 全ての役職をオンラインメンバーとは別に役職メンバーを表示するよ！ """
-		for role in ctx.guild.roles:
-			if not role.hoist:
-				await role.edit(hoist=True)
-		await ctx.send(':thumbsup:')
+	# @roles.command()
+	# async def hoist(self, ctx):
+	# 	""" 全ての役職をオンラインメンバーとは別に役職メンバーを表示するよ！ """
+	# 	for role in ctx.guild.roles:
+	# 		if not role.hoist:
+	# 			await role.edit(hoist=True)
+	# 	await ctx.send(':thumbsup:')
 
 
 	@roles.command()

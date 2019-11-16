@@ -14,16 +14,18 @@ class NewRoles(commands.Cog):
 		self.bot = bot
 		self.logger = Logger(__name__)
 
+
 	@commands.command()
 	async def dl(self, ctx):
+		""" Temporal command for deleting guild activity roles. """
 		ceiling = ctx.guild.get_role(632304461087506442)
 		roles = ctx.guild.roles
-		for role in roles:
-			if role.position is not 0 and \
-				role < ceiling:
-				self.logger.debug(f'deleting {role}')
-				await role.delete()
-		self.logger.debug('done.')
+		# for role in roles:
+		# 	if role.position is not 0 and \
+		# 		role < ceiling:
+		# 		self.logger.debug(f'deleting {role}')
+		# 		await role.delete()
+		# self.logger.debug('done.')
 		roles = await self._get_guild_activity_roles()
 		for role in roles:
 			self.logger.debug(f'deleting {role}')
@@ -34,7 +36,7 @@ class NewRoles(commands.Cog):
 	@commands.command()
 	async def role_task(self, ctx):
 		self.logger.debug('starting role_task.')
-		members = get_guild(self.bot).members
+		members = ctx.guild.members
 		self.logger.debug(f'found {len(members)} members.')
 		guild_activity_roles = await self._get_guild_activity_roles()
 		self.logger.debug('got guild activity roles.')
@@ -46,9 +48,9 @@ class NewRoles(commands.Cog):
 		# remove unused roles
 		await self._remove_unused_activity_roles(guild_activity_roles)
 
-		# configure hierarchy
-		guild_activity_roles = await self._get_guild_activity_roles()
-		await self._configure_hierarchy(guild_activity_roles)
+		# # configure hierarchy
+		# guild_activity_roles = await self._get_guild_activity_roles()
+		# await self._configure_hierarchy(guild_activity_roles)
 
 		self.logger.debug('finished role_task.')
 
@@ -78,6 +80,10 @@ class NewRoles(commands.Cog):
 		
 		# giving process
 		for aname in anames:
+			# if it was Custom status, you can't fetch the status name
+			# thus skip giving process
+			if aname == 'Custom Status':
+				continue
 			self.logger.debug(f'giving role named {aname}.')
 			# if member has activity which the member does not have a role of, give that
 			if aname not in rnames:
@@ -117,7 +123,11 @@ class NewRoles(commands.Cog):
 		self.logger.debug('found floor_role.')
 		self.logger.debug(f'floor position is {floor_role.position}.')
 		position = floor_role.position
-		await role.edit(position=position)
+		# role.edit does not work sometimes
+		while position is not role.position:
+			self.logger.debug(f'position is {position} and role.position is {role.position}')
+			await role.edit(position=position)
+
 		self.logger.debug('returning role.')
 		return role
 
@@ -149,7 +159,6 @@ class NewRoles(commands.Cog):
 		activity_roles = []
 		self.logger.debug(f'floor position is {floor.position} and ceiling position is {ceiling.position}.')
 		for role in roles:
-			self.logger.debug(f'For {role}, position is {role.position}.')
 			if role < ceiling \
 				and floor < role:
 				activity_roles.append(role)
@@ -188,12 +197,14 @@ class NewRoles(commands.Cog):
 		Configures hierarchy of guild's activity roles.
 		Hirarchy will be configured by its number of players.
 		"""
-		new_pos = get_guild(self.bot).get_role(_activity_role_floor).position + 1
+		self.logger.debug('Configuring hierarchy.')
+		new_pos = get_guild(self.bot).get_role(_activity_role_floor).position
 		# sort roles in order of members
-		roles = sorted(guild_activity_roles, key=lambda role: role.members)
+		roles = sorted(guild_activity_roles, key=lambda role: len(role.members))
 		roles.reverse()
 		for role in roles:
 			# edit role if needed
+			self.logger.debug(f'{role} is at {role.position} and new position is {new_pos}')
 			if not role.position == new_pos:
 				await role.edit(position=new_pos)
 			pos =+ 1
