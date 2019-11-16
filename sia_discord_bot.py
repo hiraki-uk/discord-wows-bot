@@ -17,6 +17,7 @@ from cogs.cogs import Cogs
 from cogs.listeners import Listener
 from cogs.roles import Roles
 from cogs.shitposting import Shitposting
+from cogs.temp import NewRoles
 from cogs.twitter_manager import Twitter_manager
 from cogs.vc import VoiceChannel
 from cogs.weather import Weather
@@ -41,16 +42,17 @@ def bot_setup():
 		activity = Activity(name=activity_name, type=ActivityType.playing)
 		bot = commands.Bot(command_prefix=prefix, activity=activity)
 	add_cogs(bot,
-			Cogs(bot),
-			# Roles(bot),
+			# Cogs(bot),
+			Roles(bot),
 			Listener(bot),
-			Shitposting(bot),
-			VoiceChannel(bot),
-			Weather(bot),
-			Twitter_manager(bot),
-			# Botdb_manager(bot, db_path)
-			Botdb_checker(db_path)
+			NewRoles(bot),
+			# Shitposting(bot),
+			# VoiceChannel(bot),
+			# Weather(bot),
+			# Twitter_manager(bot),
+			# Botdb_checker(db_path)
 	)
+			# Botdb_manager(bot, db_path)
 	return bot, key
 
 

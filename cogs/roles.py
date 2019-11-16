@@ -9,7 +9,7 @@ from scripts.scripts import get_guild
 class Roles(commands.Cog):
 	__slots__ = ('bot', 'logger')
 
-	def __init__(self, bot, logger):
+	def __init__(self, bot):
 		self.bot = bot
 		self.logger = Logger(__name__)
 
@@ -96,42 +96,42 @@ class Roles(commands.Cog):
 		await ctx.send(':thumbsup:')
 
 
-	"""
-	removed roles.on_ready as duplication of 
-	methods may be not good
-	"""
-	@commands.Cog.listener()
-	async def on_ready(self):
-		# get all members as list
-		members = get_guild(self.bot).members
-		self.logger.debug(f'{len(members)} members found.')
+	# """
+	# removed roles.on_ready as duplication of 
+	# methods may be not good
+	# """
+	# @commands.Cog.listener()
+	# async def on_ready(self):
+	# 	# get all members as list
+	# 	members = get_guild(self.bot).members
+	# 	self.logger.debug(f'{len(members)} members found.')
 
-		# add or remove game activity
-		for member in members:
-			activity = member.activities
-			activity_role_now = get_activity_role_now(member)
+	# 	# add or remove game activity
+	# 	for member in members:
+	# 		activity = member.activities
+	# 		activity_role_now = get_activity_role_now(member)
 
-			# do nothing 
-			if not activity and not activity_role_now:
-				self.logger.debug(f'no activity found for {member.nick}.')
-				continue
-			# has roles on but not playing anything
-			elif not activity and activity_role_now:
-				remove_activity_role(member)
-			# has roles on and playing something
-			elif activity and activity_role_now:
-				remove_activity_role(member)
-				give_activity_role(member)
-			# no roles but playing something
-			else:
-				give_activity_role(member)
+	# 		# do nothing 
+	# 		if not activity and not activity_role_now:
+	# 			self.logger.debug(f'no activity found for {member.nick}.')
+	# 			continue
+	# 		# has roles on but not playing anything
+	# 		elif not activity and activity_role_now:
+	# 			remove_activity_role(member)
+	# 		# has roles on and playing something
+	# 		elif activity and activity_role_now:
+	# 			remove_activity_role(member)
+	# 			give_activity_role(member)
+	# 		# no roles but playing something
+	# 		else:
+	# 			give_activity_role(member)
 			
-			self.logger.debug(f'activity found for {member.nick}.')
+	# 		self.logger.debug(f'activity found for {member.nick}.')
 
 
 
-	@commands.Cog.listener()
-	async def on_member_update(self, before, after):
-		"""
-		When member was updated, 
-		"""
+	# @commands.Cog.listener()
+	# async def on_member_update(self, before, after):
+	# 	"""
+	# 	When member was updated, 
+	# 	"""
