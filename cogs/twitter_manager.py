@@ -55,8 +55,8 @@ class Twitter_manager(commands.Cog):
 				break
 			for guild in self.bot.guilds:
 				for channel in guild.channels:
-					if channel.name == 'debug':
-					# if channel.name == 'wows-news':					
+					# if channel.name == 'debug':
+					if channel.name == 'wows-news':					
 						await channel.send(f'{status.text}\n{_create_url(status)}')
 
 		self.latest_id = statuses[0].id
