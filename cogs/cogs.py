@@ -40,3 +40,7 @@ class Cogs(commands.Cog):
 		async for message in ctx.channel.history(limit=6):
 			await message.delete()
 	
+	@commands.command()
+	async def test(self, ctx):
+		for member in ctx.guild.members:
+			print(member.activities)

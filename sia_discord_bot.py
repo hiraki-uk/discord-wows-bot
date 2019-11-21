@@ -12,11 +12,12 @@ from discord import Activity, ActivityType
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 
-from cogs.bot_db_manager import Botdb_checker, Botdb_manager
 from cogs.cogs import Cogs
 from cogs.listeners import Listener
 from cogs.roles import Roles
 from cogs.shitposting import Shitposting
+from cogs.newroles import NewRoles
+from cogs.twitter_manager import Twitter_manager
 from cogs.vc import VoiceChannel
 from cogs.weather import Weather
 from scripts.logger import Logger
@@ -41,13 +42,13 @@ def bot_setup():
 		bot = commands.Bot(command_prefix=prefix, activity=activity)
 	add_cogs(bot,
 			Cogs(bot),
-			# Roles(bot),
+			Roles(bot),
 			Listener(bot),
+			NewRoles(bot),
 			Shitposting(bot),
 			VoiceChannel(bot),
 			Weather(bot),
-			# Botdb_manager(bot, db_path)
-			Botdb_checker(db_path)
+			Twitter_manager(bot),
 	)
 	return bot, key
 

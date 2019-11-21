@@ -19,7 +19,12 @@ def get_debug_channel(bot):
 def get_guild(bot):
 	return bot.get_guild(479603954523832320)
 
+def get_mitsubabot(bot):
+	return get_guild(bot).get_member(542828851852607499)
 
+def get_tofu(bot):
+	return get_guild(bot).get_member(558122598651920404)
+	
 def get_activity_role(bot, member):
 	"""
 	Returns the activity_role which given member has.
