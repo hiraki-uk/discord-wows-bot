@@ -22,7 +22,7 @@ class Roles(commands.Cog):
 
 
 	@roles.command()
-	async def create(self, ctx, name, color):
+	async def create(self, ctx, name, color='red'):
 		""" 役職を作るよ！ roles create '役職の名前' '色（英語で教えてね！）' """
 		try:
 			color = matplotlib.colors.cnames.get(color)
@@ -30,12 +30,24 @@ class Roles(commands.Cog):
 			await ctx.send('名前と色も教えてね！')	
 			return
 
-		if color is not None:
-			color = discord.Colour(int(str(color)[1:], 16))
-			await ctx.guild.create_role(name=name, colour=color)
-			await ctx.send(name + ', いっちょあがり！')
-		else:
-			await ctx.send('そんな色知らないよ！')
+		color = discord.Colour(int(str(color)[1:], 16))
+		await ctx.guild.create_role(name=name, colour=color)
+		await ctx.send(name + ', いっちょあがり！')
+
+
+	@roles.command()
+	async def random(self, ctx, target=None):
+		if target is None:
+			await ctx.send('役職誰にあげるのかわかんないよ〜')
+			return
+		elif not check_user(target):
+			await ctx.send('誰この人！')
+			return
+		
+		user = get_user(name=target)
+		give_role(user, role)
+		
+		await ctx.send('じゃーん！何あげたでしょー')
 
 
 	@roles.command()
