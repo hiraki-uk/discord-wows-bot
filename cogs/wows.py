@@ -1,21 +1,40 @@
-from discord.ext import tasks, commands
+import asyncio
+import datetime
+import sqlite3
+import traceback
 from enum import Enum
-from wowspy import Wows 
 
+import requests
+from discord.ext import commands, tasks
+from wowspy import Wows
+
+from scripts.logger import Logger
 
 db_path = 'players.db'
 
 
 class WorldOfWarships(commands.Cog):
 	def __init__(self):
-		pass
+		self.wowsmanager = WowsdbManager()
+		self.wowsapi = WowsAPI()
+
 
 	@commands.command()
-	async def register(self, ctx, name):
+	async def register(self, ctx, ign=None):
 		""" あなたを登録するよ！ """
-		await ctx.send(f'{name}さんね、ちょっと待ってて')			
-		# get player id from Wows
+		if ign is None:
+			await ctx.send('いんげーむねーむも教えてね！')
+			return
+		await ctx.send(f'{ign}さんね、ちょっと待ってて')			
+		# get wows_id from Wows
+		discord_id = ctx.user.id
+		player = WowsAPI.create_player_info(ign, discord_id)
+		if player is None:
+			await ctx.send('このぷれいやーいないみたいだよ？')
+			return
 		
+		self.wowsmanager.register(player)
+
 
 	@commands.command()
 	async def deregister(self, ctx):
@@ -30,36 +49,25 @@ class WorldOfWarships(commands.Cog):
 		pass
 
 
-class WowsDatabase:
-	def __init__(self, db_path):
-		self.database = Database(db_path)
+class WowsAPI(Wows):
+	pass
+
+
+class WowsdbManager:
+	"""
+	WowsdbManager class.
+	Responsible for interaction between wows and database.
+	"""
+	def __init__(self):
+		self.database = Wows_database(db_path)
 		self.logger = Logger(__name__)
-		# if db file not found or empty, create file
-		try:
-			with open(db_path, 'rb') as f:
-				if f.read() == b'':
-					self._create_table()
-		except Exception as e:
-			self.logger.info('Database not found.')
-			self._create_table()
 
 
-	def _create_table(self):
-		self.logger.debug('Creating wows database table.')
-		self.database.executescript("""
-		CREATE TABLE wowsnews(
-			id INTEGER PRIMARY KEY,
-			name TEXT,
-			clan TEXT
-		);
-		""")
-		self.logger.debug('Created wows database table.')
+	def register(self, player):
+		if self.database.is_registered(player.discord_id):
+			return
 
-
-	def register(self, name):
-		cmd = 'INSERT INTO players'
-		self.db.execute('')
-
+		self.database.register(player)
 
 	def update(self, name_before, name_after):
 		pass
@@ -68,24 +76,10 @@ class WowsDatabase:
 		pass
 
 
-import asyncio
-import datetime
-import sqlite3
-import traceback
-
-import requests
-
-from database.database import Database
-from database.scrape_facebook import get_facebook_articles
-from database.scrape_medium import get_medium_articles
-from database.scrape_wowshp import get_hp_articles
-from scripts.Exceptions import ScrapingException
-from scripts.logger import Logger
-
-
 class Wows_database:
 	"""
-	Scrapes and registers data into database.
+	Wows_database class.
+	Responsible for interactions with database.
 	"""
 	__slots__ = ('database', 'logger')
 
@@ -102,128 +96,48 @@ class Wows_database:
 			self._create_table()
 
 
-	async def update(self):
-		"""
-		Update database.
-		"""
-		self.logger.info('Update started.')
-		try:
-			await self._update_hp()
-		except Exception:
-			self.logger.critical(f'Exception while updating: {traceback.format_exc()}')
-		self.logger.info('Update finished.')
-
-
 	def _create_table(self):
 		self.logger.debug('Creating wows database table.')
 		self.database.executescript("""
-		CREATE TABLE wowsnews(
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			source TEXT,
-			title TEXT,
-			description TEXT,
-			url TEXT,
-			img TEXT
+		CREATE TABLE players(
+			discord_id INTEGER PRIMARY KEY AUTOINCREMENT,
+			wows_id INTEGER,
+			in_game_name TEXT,
+			clan TEXT
 		);
 		""")
 		self.logger.debug('Created wows database table.')
 
 
-	def _get_latest(self, source:str):
+	def register(self, discord_id, wows_id, in_game_name, clan):
 		"""
-		Get latest news stored in database.
-
-		Returns
-		-------
-		res : tuple, None
+		Register discord user into database.
 		"""
-		self.logger.debug(f'Starting _get_latest source: {source}')
-		res = self.database.fetchone('SELECT * FROM wowsnews WHERE source==? ORDER BY id DESC', (source,))
-		self.logger.debug(f'_get_latest result: {res}')
-		
-		return res
-
-
-	async def _update_medium(self):
-		"""
-		Check for new articles, if found update db.
-		"""
-		self.logger.info('Updating medium.')
-		try:
-			data = get_medium_articles()
-		except ScrapingException:
-			self.logger.critical('Scraping failed.')
-			return
-
-		# get latest data in database
-		data_db = self._get_latest('medium')
-		# if up to date, return
-		if _is_same_data(data_db, data[0]):
-			self.logger.info('Medium is up to date.')
-			return
-		# counter shows how many articles to update
-		counter = 0
-		for d in data:
-			# if url is most recent in db
-			if d == data_db:
-				break
-			counter += 1
-		# data.reverse() not working, so using temp reverse()
-		temp = data
-		temp.reverse()
-		news = temp[:counter]
-		try:
-			for new in news:
-				self.database.execute('INSERT INTO wowsnews(source, title, description, url, img) VALUES(?, ?, ?, ?, ?)', new)
-		except Exception as e:
-			self.logger.critical(f'Inserting into database failed: {e}')
-			return
-		self.logger.info('Updated medium.')
-
-
-	def _url_exists(self, url:str):
-		self.logger.debug('Checking if url already exists in database.')
-		self.logger.debug(f'url is {url[10:]}')
-		try:
-			res = self.database.fetchone(f'SELECT * FROM wowsnews WHERE url==?', (url,))
-		except Exception as e:
-			self.logger.critical(f'Fetching datbase failed: {e}')
-			res = None
-		self.logger.debug(f'Result: {res}')
-		if not res:
-			return False
-		return True
+		self.logger.debug(f'Registering {in_game_name}.')
+		self.database.execute('INSERT INTO players VALUES()', (discord_id, wows_id, in_game_name, clan))
+		self.logger.debug('Registered player.')
 
 	
-def _is_same_data(data_from_db:tuple, data:tuple):
-	"""
-	Returns true if two data are the same excluding the id.
-	Else returns false.
-	"""
-	if data_from_db == None:
-		return False
-	temp = tuple(data_from_db[1:])
-	if temp != data:
-		return False
-	return True
+	def deregister(self, discord_id):
+		"""
+		Deregister discord user from database.
+		"""
+		self.logger.debug('Deregistering user.')
+		self.database.execute('')
+		self.logger.debug('Deregistered user.')
+	
+
+	def is_registered(self, discord_id):
+		"""
+		Checks is given discord_id is registered.
+		"""
+		result = self.database.fetchone('SELECT discord_id from players WHERE discord_id = ?', (discord_id,))
+		return result is None
 
 
-def _has_same_url(data_from_db:tuple, data:tuple):
-	"""
-	Returns true if two data share the same url.
-	Else returns false.
-
-	This method is craeted for comparing facebook data as
-	_is_same_data return false for same article where
-	pic url are different.
-	"""
-	if data_from_db == None:
-		return False
-	temp = tuple(data_from_db[1:])
-	if temp[3] != data[3]:
-		return False
-	return True
-
-
-class Region(Enum):
-	ASIA = 'ASIA'
+class Player:
+	def __init__(self, discord_id, wows_id, in_game_name, clan):
+			self.discord_id = discord_id
+			self.wows_id = wows_id
+			self.ign = in_game_name
+			self.clan = clan
