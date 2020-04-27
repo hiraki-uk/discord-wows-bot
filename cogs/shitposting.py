@@ -36,7 +36,6 @@ class Shitposting(commands.Cog):
 			return
 		await janken_proc(ctx, choice)
 
-
 	# card battle
 	@commands.command()
 	async def card(self, ctx, choice=None):
