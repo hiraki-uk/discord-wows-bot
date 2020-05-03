@@ -30,6 +30,9 @@ class Wows_database:
 			in_game_name TEXT,
 			clan TEXT
 		);
+		CREATE TABLE version (
+			latest_version INTGER PRIMARY KEY
+		);
 		CREATE TABLE warships(
 			price_gold INTEGER,
 			ship_id_str TEXT,
@@ -39,7 +42,7 @@ class Wows_database:
 			modules_tree TEXT,
 			nation TEXT,
 			is_premium INTEGER,
-			ship_id INTEGER,
+			ship_id INTEGER PRIMARY KEY,
 			price_credit INTEGER,
 			default_profile TEXT,
 			upgrades TEXT,
@@ -50,16 +53,40 @@ class Wows_database:
 			is_special INTEGER,
 			name TEXT
 		);
+		INSERT INTO version VALUES(0);
 		""")
 		self.logger.debug('Created wows database table.')
 
-	def _fill_database(self):
+	def get_db_version(self):
 		"""
-		Fill database with warships.
+		Get the version of database.
 		"""
+		command = 'SELECT latest_version from version ORDER BY latest_version desc'
+		version = self.database.fetchone(command)
+		return version
+		
+	def update_version(self, version):
+		"""
+		Update version to given version.
+		"""
+		command = 'INSERT INTO version VALUES(?)'
+		self.database.execute(command, (version,))
+		self.logger.debug('Database updated.')
+	
+	def update_warships(self, warships):
+		"""
+		Update database with given warships.
+		"""
+		for id, warship in warships:
+			# if id not found in database, register
+			result = self.database.execute('SELECT * FROM warships WHERE ship_id_str=?', (id,))
+			if result is not None:
+				continue
+			self.register_ship(warship)
+		
 	def register_ship(self, data):
 		"""
-		Register ship into database only if 
+		Register ship into database.
 		"""
 		price_gold = data['price_gold']
 		ship_id_str = data['ship_id_str']
@@ -94,7 +121,7 @@ class Wows_database:
 	
 		self.database.execute(command, values)
 		
-	def register(self, player, discord_id):
+	def register_user(self, player, discord_id):
 		"""
 		Register discord user into database.
 		"""
@@ -102,7 +129,7 @@ class Wows_database:
 		self.database.execute('INSERT INTO players VALUES(?, ?, ?, ?) ', (discord_id, player['account_id'], player['nickname'], ''))
 		self.logger.debug('Registered player.')
 	
-	def deregister(self, discord_id):
+	def deregister_user(self, discord_id):
 		"""
 		Deregister discord user from database.
 		"""
@@ -110,7 +137,7 @@ class Wows_database:
 		self.database.execute('DELETE FROM players WHERE discord_id = ?', (discord_id,))
 		self.logger.debug('Deregistered user.')
 	
-	def is_registered(self, discord_id):
+	def is_user_registered(self, discord_id):
 		"""
 		Checks is given discord_id is registered.
 		"""
