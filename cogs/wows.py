@@ -65,7 +65,6 @@ class WorldOfWarships(commands.Cog):
 
 class WowsAPI(Wows):
 	def __init__(self, key):
-		super().__init__(key)
 		self.logger = Logger(self.__class__.__name__)
 
 	def create_player_info(self, player_name):
@@ -84,6 +83,10 @@ class WowsAPI(Wows):
 		player_data = player_data['data'][str(player_id)]
 		self.logger.debug('Created player_data successfully.')
 		return player_data
+
+	def create_ship_info(self, ship_name):
+		self.logger.debug(f'Creating ship_info for {ship_name}.')
+		ship = self.ship_parameters(Region.AS, )
 
 
 class WowsdbManager:
@@ -166,3 +169,7 @@ class Wows_database:
 		self.logger.debug(f'{result=}')
 		return result is not None
 
+if __name__ == '__main__':
+	wows = Wows('6e513bc6bf277c5bf46d03d7b11dbe68')
+	with open('temp.json', 'w') as f:
+		f.write(wows.warships(region=Region.AS, language='ja'))
