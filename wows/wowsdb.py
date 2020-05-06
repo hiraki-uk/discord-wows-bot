@@ -31,7 +31,8 @@ class Wows_database:
 			clan TEXT
 		);
 		CREATE TABLE version (
-			latest_version INTGER PRIMARY KEY
+			version_id INTEGER PRIMARY KEY AUTOINCREMENT,
+			latest_version TEXT
 		);
 		CREATE TABLE warships(
 			price_gold INTEGER,
@@ -53,7 +54,7 @@ class Wows_database:
 			is_special INTEGER,
 			name TEXT
 		);
-		INSERT INTO version VALUES(0);
+		INSERT INTO version(latest_version) VALUES('initial value');
 		""")
 		self.logger.debug('Created wows database table.')
 
@@ -61,15 +62,17 @@ class Wows_database:
 		"""
 		Get the version of database.
 		"""
-		command = 'SELECT latest_version from version ORDER BY latest_version desc'
-		version = self.database.fetchone(command)
+		command = 'SELECT latest_version from version ORDER BY version_id desc'
+		result = self.database.fetchone(command)
+		version = result[0]
+		self.logger.debug('Returning database version.')
 		return version
 		
 	def update_version(self, version):
 		"""
 		Update version to given version.
 		"""
-		command = 'INSERT INTO version VALUES(?)'
+		command = 'INSERT INTO version(latest_version) VALUES(?)'
 		self.database.execute(command, (version,))
 		self.logger.debug('Database updated.')
 	
@@ -77,9 +80,9 @@ class Wows_database:
 		"""
 		Update database with given warships.
 		"""
-		for id, warship in warships:
+		for warship in warships:
 			# if id not found in database, register
-			result = self.database.execute('SELECT * FROM warships WHERE ship_id_str=?', (id,))
+			result = self.database.execute('SELECT * FROM warships WHERE ship_id=?', (warship['ship_id'],))
 			if result is not None:
 				continue
 			self.register_ship(warship)
@@ -99,7 +102,7 @@ class Wows_database:
 		ship_id = data['ship_id']
 		price_credit = data['price_credit']
 		default_profile = data['default_profile']
-		upgrades = data['upgrages']
+		upgrades = data['upgrades']
 		tier = data['tier']
 		next_ships = data['next_ships']
 		mod_slots = data['mod_slots']
@@ -107,11 +110,13 @@ class Wows_database:
 		is_special = data['is_special']
 		name = data['name']
 
-		has_demo_profile is 1 if has_demo_profile == 'true' else 0
+		has_demo_profile = 1 if has_demo_profile == 'True' else 0
 		images = str(images)
 		modules = str(modules)
 		modules_tree = str(modules_tree)
-		
+		is_premium = 1 if is_premium == 'True' else 0
+		is_special = 1 if is_special == 'True' else 0
+
 		command = 'INSERT INTO warships VALUES(?,?,?,?,?,?,?,?,?,?,' \
 												'?,?,?,?,?,?,?,?)' 
 		values = (price_gold, ship_id_str, has_demo_profile,
