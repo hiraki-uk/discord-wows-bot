@@ -2,6 +2,8 @@ from cogs.cogfunctions.database import Database
 from scripts.logger import Logger
 import json
 
+from .warship import Warship
+
 class Wows_database:
 	"""
 	Wows_database class.
@@ -32,7 +34,12 @@ class Wows_database:
 		);
 		CREATE TABLE version (
 			version_id INTEGER PRIMARY KEY AUTOINCREMENT,
-			latest_version TEXT
+			ships_updated_at INTGER
+		);
+		CREATE TABLE updates(
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			ship_id INTEGER,
+			diff TEXT
 		);
 		CREATE TABLE warships(
 			price_gold INTEGER,
@@ -54,7 +61,7 @@ class Wows_database:
 			is_special INTEGER,
 			name TEXT
 		);
-		INSERT INTO version(latest_version) VALUES('initial value');
+		INSERT INTO version(ships_updated_at) VALUES('initial value');
 		""")
 		self.logger.debug('Created wows database table.')
 
@@ -62,8 +69,8 @@ class Wows_database:
 		"""
 		Get the version of database.
 		"""
-		command = 'SELECT latest_version from version ORDER BY version_id desc'
-		result = self.database.fetchone(command)
+		command = 'SELECT ships_updated_at from version ORDER BY version_id desc'
+		result = self.database.fetch(command)
 		version = result[0]
 		self.logger.debug('Returning database version.')
 		return version
@@ -72,10 +79,29 @@ class Wows_database:
 		"""
 		Update version to given version.
 		"""
-		command = 'INSERT INTO version(latest_version) VALUES(?)'
+		command = 'INSERT INTO version(ships_updated_at) VALUES(?)'
 		self.database.execute(command, (version,))
 		self.logger.debug('Database updated.')
 	
+	def get_warship(self, name):
+		"""
+		Get information of a warship of given name.
+		"""
+		self.logger.debug(f'Searching for a warship with {name=}.')
+		# exact match
+		result = self.database.fetch('SELECT * FROM warships WHERE name=?', (name,))
+		if result:
+			warship = create_warship_from_db(result)
+			return warship
+		results = self.database.fetch(f'SELECT * FROM warships WHERE name LIKE ?', (f'{name}%',), count=3)
+		warships = []
+		if results:
+			for result in results:
+				warship = create_warship_from_db(result)
+				warships.append(warship)
+
+		return warships
+
 	def update_warships(self, warships):
 		"""
 		Update database with given warships.
@@ -83,10 +109,16 @@ class Wows_database:
 		for warship in warships:
 			# if id not found in database, register
 			result = self.database.execute('SELECT * FROM warships WHERE ship_id=?', (warship['ship_id'],))
-			if result is not None:
-				continue
-			self.register_ship(warship)
-		
+			if result is None:
+				self.register_ship(warship)
+			# if id found but data not up to date, update
+			else:
+				pass
+				# diff = Warship.get_diff(warship, result)
+				# if diff is not None:
+				# 	self.save_updates(diff)
+				# 	self.update_warship(warship)
+
 	def register_ship(self, data):
 		"""
 		Register ship into database.
@@ -115,6 +147,9 @@ class Wows_database:
 		modules = str(modules)
 		modules_tree = str(modules_tree)
 		is_premium = 1 if is_premium == 'True' else 0
+		default_profile = str(default_profile)
+		upgrades = str(upgrades)
+		next_ships = str(next_ships)
 		is_special = 1 if is_special == 'True' else 0
 
 		command = 'INSERT INTO warships VALUES(?,?,?,?,?,?,?,?,?,?,' \
@@ -126,6 +161,12 @@ class Wows_database:
 	
 		self.database.execute(command, values)
 		
+	# def update_warship(self, warship):
+	# 			command = 'INSERT INTO warships VALUES(?,?,?,?,?,?,?,?,?,?,' \
+	# 											'?,?,?,?,?,?,?,?)' 
+	# 	self.database.execute(command, values)	
+
+
 	def register_user(self, player, discord_id):
 		"""
 		Register discord user into database.
@@ -146,6 +187,6 @@ class Wows_database:
 		"""
 		Checks is given discord_id is registered.
 		"""
-		result = self.database.fetchone('SELECT discord_id from players WHERE discord_id = ?', (discord_id,))
+		result = self.database.fetch('SELECT discord_id from players WHERE discord_id = ?', (discord_id,))
 		self.logger.debug(f'{result=}')
 		return result is not None

@@ -18,8 +18,7 @@ class WorldofWarships:
 		# check version
 		version_db = self.wowsdb.get_db_version()
 		version_api = self.wowsapi.get_api_version()
-		print(version_api)
-		print(version_db)
+
 		# return if version is up to date.
 		if version_db == version_api:
 			self.logger.debug(f'Returning as database has latest version {version_db}.')

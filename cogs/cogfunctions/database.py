@@ -14,9 +14,9 @@ class Database:
 		self.logger = Logger(__name__) if logger is None else logger
 
 
-	def fetchone(self, command:str, values=()):
+	def fetch(self, command:str, values=(), count=1):
 		"""
-		Get one result from database.
+		Fetch data from database.
 		"""
 		self.logger.debug(f'Executing script on {self.db_path}.')
 		# connect and execute script
@@ -24,7 +24,10 @@ class Database:
 			conn = self._create_connection()
 			cursor = conn.cursor()
 			cursor.execute(command, values)
-			result = cursor.fetchone()
+			if count == 1:
+				result = cursor.fetchone()
+			else:
+				result = cursor.fetchmany(count)
 		# sql errors
 		except Exception as e:
 			self.logger.critical(e)

@@ -13,7 +13,7 @@ db_path = 'wows.db'
 class TestWows(unittest.TestCase):
 	def test_wows(self):
 		w = WorldofWarships(key, db_path)
-		w.update_warships()
-		version = w.wowsdb.get_db_version()
-		self.assertNotEqual(version, 0)
-		os.remove(db_path)			
+		print(w.wowsdb.get_warship('大和'))
+
+w = WorldofWarships(key, db_path)
+print(w.wowsdb.get_warship('georg'))
