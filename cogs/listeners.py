@@ -27,12 +27,12 @@ class Listener(commands.Cog):
 	@commands.Cog.listener()
 	async def on_message(self, mes):
 		self.logger.info(f'Message:{mes.content} author:{mes.author.name} id:{mes.author.id}')
-		if mes.attachments:
-			for attachment in mes.attachments:
-				try:
-					await attachment.save(attachmentpath + str(attachment.id) + attachment.filename, seek_begin=True, use_cached=True)
-				except:
-					continue
+		# if mes.attachments:
+		# 	for attachment in mes.attachments:
+		# 		try:
+		# 			await attachment.save(attachmentpath + str(attachment.id) + attachment.filename, seek_begin=True, use_cached=True)
+		# 		except:
+		# 			continue
 
 
 	@commands.Cog.listener()

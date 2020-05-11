@@ -35,19 +35,19 @@ class Roles(commands.Cog):
 		await ctx.send(name + ', いっちょあがり！')
 
 
-	@roles.command()
-	async def random(self, ctx, target=None):
-		if target is None:
-			await ctx.send('役職誰にあげるのかわかんないよ〜')
-			return
-		elif not check_user(target):
-			await ctx.send('誰この人！')
-			return
+	# @roles.command()
+	# async def random(self, ctx, target=None):
+	# 	if target is None:
+	# 		await ctx.send('役職誰にあげるのかわかんないよ〜')
+	# 		return
+	# 	elif not check_user(target):
+	# 		await ctx.send('誰この人！')
+	# 		return
 		
-		user = get_user(name=target)
-		give_role(user, role)
+	# 	user = get_user(name=target)
+	# 	give_role(user, role)
 		
-		await ctx.send('じゃーん！何あげたでしょー')
+	# 	await ctx.send('じゃーん！何あげたでしょー')
 
 
 	@roles.command()
