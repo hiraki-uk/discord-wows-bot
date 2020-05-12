@@ -14,7 +14,6 @@ class Listener(commands.Cog):
 		self.bot = bot
 		self.logger = Logger(__name__) if logger is None else logger
 
-
 	@commands.Cog.listener()
 	async def on_ready(self):
 		print('----------')
@@ -22,7 +21,6 @@ class Listener(commands.Cog):
 		print('name:\t' + self.bot.user.name)
 		print('id:\t' + str(self.bot.user.id))
 		print('----------')
-
 
 	@commands.Cog.listener()
 	async def on_message(self, mes):
@@ -34,16 +32,13 @@ class Listener(commands.Cog):
 		# 		except:
 		# 			continue
 
-
 	@commands.Cog.listener()
 	async def on_command_error(self, ctx, error):
 		pass
 
-
 	@commands.Cog.listener()
 	async def on_member_remove(self, member):
 		self.logger.info(f'Member removed:{member.name} id:{member.id}')
-
 
 	@commands.Cog.listener()
 	async def on_raw_message_delete(self, payload):

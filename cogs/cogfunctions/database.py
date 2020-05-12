@@ -13,7 +13,6 @@ class Database:
 		self.db_path = db_path
 		self.logger = Logger(__name__) if logger is None else logger
 
-
 	def fetch(self, command:str, values=(), count=1):
 		"""
 		Fetch data from database.
@@ -40,7 +39,6 @@ class Database:
 		self.logger.debug(f'Executing script finished on {self.db_path}.')
 		return result
 
-
 	def execute(self, command:str, values=()):
 		"""
 		Get one result from database.
@@ -61,7 +59,6 @@ class Database:
 			self._close_connection(conn)
 
 		self.logger.debug(f'Executing script finish on {self.db_path}.')
-
 
 	def executescript(self, command:str):
 		"""
@@ -84,13 +81,11 @@ class Database:
 
 		self.logger.debug(f'Executing script finished on {self.db_path}.')
 
-
 	def _create_connection(self) -> Connection:
 		self.logger.debug('Connecting to database.')
 		conn = sqlite3.connect(self.db_path)
 		self.logger.debug('Connected to database.')
 		return conn
-
 
 	def _close_connection(self, conn):
 		self.logger.debug('Closing connection to database.')

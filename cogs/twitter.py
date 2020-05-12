@@ -8,7 +8,6 @@ class TwitterCogs(commands.Cog):
 		self.bot = bot
 		self.latest_news_id = 0
 
-	
 	@tasks.loop(seconds=30)
 	async def news_task(self):
 		"""

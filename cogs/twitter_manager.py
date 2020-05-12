@@ -16,9 +16,7 @@ try:
 except:
 	pass
 
-
 load_dotenv('.env')
-
 
 _wowsnewsjp_id = 1063025161014796289
 _base_url = 'https://twitter.com/wowsnews_jp/status/'
@@ -37,7 +35,6 @@ class Twitter_manager(commands.Cog):
 		self.latest_id = statuses[0].id
 		self.logger = Logger(__name__)
 		self.check_task.start()
-
 
 	@tasks.loop(seconds=30)
 	async def check_task(self):
@@ -62,7 +59,6 @@ class Twitter_manager(commands.Cog):
 		self.latest_id = statuses[0].id
 		self.logger.debug('Finished sending.')
 
-
 	@check_task.before_loop
 	async def before_check(self):
 		await self.bot.wait_until_ready()
@@ -81,7 +77,6 @@ class WowsNewsJP:
 			access_token_key = getenv('TWITTER_TOKEN_KEY'),
 			access_token_secret = getenv('TWITTER_TOKEN_SECRET')
 		)
-
 
 	def get_latest_statuses(self, count=3):
 		"""

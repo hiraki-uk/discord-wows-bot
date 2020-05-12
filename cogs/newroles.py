@@ -14,7 +14,6 @@ class NewRoles(commands.Cog):
 		self.bot = bot
 		self.logger = Logger(__name__)
 
-
 	@commands.command()
 	async def dl(self, ctx):
 		""" Temporal command for deleting guild activity roles. """
@@ -31,7 +30,6 @@ class NewRoles(commands.Cog):
 			self.logger.debug(f'deleting {role}')
 			await role.delete()
 		self.logger.debug('done.')
-	
 	
 	@commands.command()
 	async def role_task(self, ctx):
@@ -53,7 +51,6 @@ class NewRoles(commands.Cog):
 		# await self._configure_hierarchy(guild_activity_roles)
 
 		self.logger.debug('finished role_task.')
-
 
 	async def _configure_roles(self, member):
 		"""
@@ -94,7 +91,6 @@ class NewRoles(commands.Cog):
 				self.logger.debug('added role.')
 			# else, member has activity and has role of, pass
 
-
 	async def _get_opt_role(self, aname):
 		"""
 		Get a role where name is aname.
@@ -109,7 +105,6 @@ class NewRoles(commands.Cog):
 		role = await self._create_role(aname)
 		return role
 		
-
 	async def _create_role(self, aname):
 		"""
 		Return role with given name aname and position where one larger than role_floor.
@@ -131,7 +126,6 @@ class NewRoles(commands.Cog):
 		self.logger.debug('returning role.')
 		return role
 
-
 	def _get_role(self, activity_roles, rname):
 		"""
 		Get role where name is rname in activity_roles.
@@ -141,7 +135,6 @@ class NewRoles(commands.Cog):
 			if arole.name == rname:
 				return arole
 		return None
-
 
 	# merge _get_guild_activity_roles() and _get_activity_roles() later
 	async def _get_guild_activity_roles(self):
@@ -165,7 +158,6 @@ class NewRoles(commands.Cog):
 		self.logger.debug(f'returning roles list with {len(activity_roles)} items.')
 		return activity_roles
 
-
 	async def _get_activity_roles(self, member):
 		"""
 		Return list of activity roles of a given member.
@@ -182,7 +174,6 @@ class NewRoles(commands.Cog):
 				activity_roles.append(role)
 		return activity_roles
 
-
 	async def _remove_unused_activity_roles(self, guild_activity_roles):
 		"""
 		Removes all unused activity roles.
@@ -190,7 +181,6 @@ class NewRoles(commands.Cog):
 		for role in guild_activity_roles:
 			if not role.members:
 				await role.delete()
-
 		
 	async def _configure_hierarchy(self, guild_activity_roles):
 		"""
