@@ -43,7 +43,6 @@ class Twitter_manager(commands.Cog):
 	async def check_task(self):
 		self.logger.debug('Checking for latest tweets.')
 		statuses = self.wowsnews_jp.get_latest_statuses()
-		statuses.reverse()
 		# return if up to date
 		if self.latest_id == statuses[0].id:
 			self.logger.debug('Twitter_manager is up to date.')
@@ -98,4 +97,4 @@ def _create_url(status):
 
 if __name__ == '__main__':
 	w = WowsNewsJP()
-	print(w.get_latest_statuses()[0].id_str)
+	print(w.get_latest_statuses())
