@@ -45,6 +45,8 @@ class TestWowsDb(unittest.TestCase):
 		w = Wows_database(db_path)
 		res = w.get_warship('Georgia')
 		self.assertNotEqual(res, None)
+		res = w.get_warship('G')
+		self.assertNotEqual(res, None)
 
 	def test_get_warships(self):
 		w = Wows_database(db_path)
@@ -62,20 +64,20 @@ class TestWowsDb(unittest.TestCase):
 		self.assertNotEqual(res, None)
 
 
-class TestWows(unittest.TestCase):
-	def test_update_warships(self):
-		w = WorldofWarships(key, db_path)	
-		w.update_warships()
-		wd = Wows_database(db_path)
-		res = wd.get_warship('Georgia')
-		self.assertNotEqual(res, None)
+# class TestWows(unittest.TestCase):
+# 	def test_update_warships(self):
+# 		w = WorldofWarships(key, db_path)	
+# 		w.update_warships()
+# 		wd = Wows_database(db_path)
+# 		res = wd.get_warship('Georgia')
+# 		self.assertNotEqual(res, None)
 	
-	def test_update_shipparams(self):
-		w = WorldofWarships(key, db_path)
-		w.update_shipparams()
-		wd = Wows_database(db_path)
-		res = wd.get_shipparam(3248371408)
-		self.assertNotEqual(res, None)
+# 	def test_update_shipparams(self):
+# 		w = WorldofWarships(key, db_path)
+# 		w.update_shipparams()
+# 		wd = Wows_database(db_path)
+# 		res = wd.get_shipparam(3248371408)
+# 		self.assertNotEqual(res, None)
 
 		
 if __name__ == '__main__':
