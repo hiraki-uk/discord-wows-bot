@@ -13,10 +13,10 @@ class Database:
 		self.db_path = db_path
 		self.logger = Logger(__name__) if logger is None else logger
 
-
-	def fetchone(self, command:str, values=()):
+	def fetch(self, command:str, values=(), count=1):
 		"""
-		Get one result from database.
+		Fetch data from database.
+		Set count = -1 to fetch all.
 		"""
 		self.logger.debug(f'Executing script on {self.db_path}.')
 		# connect and execute script
@@ -24,7 +24,12 @@ class Database:
 			conn = self._create_connection()
 			cursor = conn.cursor()
 			cursor.execute(command, values)
-			result = cursor.fetchone()
+			if count == 1:
+				result = cursor.fetchone()
+			elif count == -1:
+				result = cursor.fetchall()
+			else:
+				result = cursor.fetchmany(count)
 		# sql errors
 		except Exception as e:
 			self.logger.critical(e)
@@ -36,7 +41,6 @@ class Database:
 
 		self.logger.debug(f'Executing script finished on {self.db_path}.')
 		return result
-
 
 	def execute(self, command:str, values=()):
 		"""
@@ -59,7 +63,6 @@ class Database:
 
 		self.logger.debug(f'Executing script finish on {self.db_path}.')
 
-
 	def executescript(self, command:str):
 		"""
 		Execute script on database.
@@ -81,13 +84,11 @@ class Database:
 
 		self.logger.debug(f'Executing script finished on {self.db_path}.')
 
-
 	def _create_connection(self) -> Connection:
 		self.logger.debug('Connecting to database.')
 		conn = sqlite3.connect(self.db_path)
 		self.logger.debug('Connected to database.')
 		return conn
-
 
 	def _close_connection(self, conn):
 		self.logger.debug('Closing connection to database.')

@@ -25,7 +25,6 @@ class Cogs(commands.Cog):
 		""" 現在バージョンを教えるよ！ """
 		await ctx.send(ver)
 
-
 	# delete ten messages
 	@commands.command()
 	async def delten(self, ctx):

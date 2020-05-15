@@ -13,7 +13,6 @@ class VoiceChannel(commands.Cog):
 		self.bot = bot
 		self.logger = Logger(__name__) if logger is None else logger
 		
-
 	# change voice channel's bit rate
 	@commands.command()
 	async def bitrate(self, ctx, bitrate=None):

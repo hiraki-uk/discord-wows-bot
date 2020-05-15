@@ -27,14 +27,11 @@ class Logger:
 	def debug(self, msg):
 		self.logger.debug(msg)
 	
-
 	def info(self, msg):
 		self.logger.info(msg)
 	
-
 	def warn(self, msg):
 		self.logger.warning(msg)
-
 
 	def critical(self, msg):
 		self.logger.critical(msg)

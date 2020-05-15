@@ -16,9 +16,7 @@ try:
 except:
 	pass
 
-
 load_dotenv('.env')
-
 
 _wowsnewsjp_id = 1063025161014796289
 _base_url = 'https://twitter.com/wowsnews_jp/status/'
@@ -33,11 +31,9 @@ class Twitter_manager(commands.Cog):
 		self.wowsnews_jp = WowsNewsJP()
 		self.bot = bot
 		statuses = self.wowsnews_jp.get_latest_statuses()
-		statuses.reverse()
 		self.latest_id = statuses[0].id
 		self.logger = Logger(__name__)
 		self.check_task.start()
-
 
 	@tasks.loop(seconds=30)
 	async def check_task(self):
@@ -47,20 +43,22 @@ class Twitter_manager(commands.Cog):
 		if self.latest_id == statuses[0].id:
 			self.logger.debug('Twitter_manager is up to date.')
 			return
+		to_send = []
 		for status in statuses:
 			# stop if id is the one saved
 			if status.id == self.latest_id:
 				self.logger.debug('This tweet has already been sent.')
 				break
-			for guild in self.bot.guilds:
-				for channel in guild.channels:
-					# if channel.name == 'debug':
-					if channel.name == 'wows-news':					
+			to_send.insert(0, status)
+
+		for guild in self.bot.guilds:
+			for channel in guild.channels:
+				if channel.name == 'wows-news':
+					for status in to_send:
 						await channel.send(f'{status.text}\n{_create_url(status)}')
 
 		self.latest_id = statuses[0].id
 		self.logger.debug('Finished sending.')
-
 
 	@check_task.before_loop
 	async def before_check(self):
@@ -80,7 +78,6 @@ class WowsNewsJP:
 			access_token_key = getenv('TWITTER_TOKEN_KEY'),
 			access_token_secret = getenv('TWITTER_TOKEN_SECRET')
 		)
-
 
 	def get_latest_statuses(self, count=3):
 		"""

@@ -14,12 +14,13 @@ from dotenv import load_dotenv
 
 from cogs.cogs import Cogs
 from cogs.listeners import Listener
+from cogs.newroles import NewRoles
 from cogs.roles import Roles
 from cogs.shitposting import Shitposting
-from cogs.newroles import NewRoles
 from cogs.twitter_manager import Twitter_manager
 from cogs.vc import VoiceChannel
 from cogs.weather import Weather
+from cogs.wows import WowsCog
 from scripts.logger import Logger
 from scripts.scripts import add_cogs
 
@@ -48,6 +49,7 @@ def bot_setup():
 			Shitposting(bot),
 			VoiceChannel(bot),
 			Weather(bot),
+			WowsCog(bot),
 			Twitter_manager(bot),
 	)
 	return bot, key

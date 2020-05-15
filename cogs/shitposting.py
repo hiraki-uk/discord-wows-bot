@@ -26,6 +26,11 @@ class Shitposting(commands.Cog):
 		with open('res/jow.txt', 'r', encoding='utf-8') as f:
 			await ctx.send('```' + f.read() + '```')
 
+	@commands.command()
+	async def kuitan(self, ctx):
+		""" 喰いタンを許すな """
+		with open('res/kuitan.txt', 'r', encoding='utf-8') as f:
+			await ctx.send('```' + f.read() + '```')
 	# janken 
 	@commands.command()
 	async def janken(self, ctx, choice=None):
@@ -35,7 +40,6 @@ class Shitposting(commands.Cog):
 			await ctx.send('エラー:\nただいまアクセス集中により、返信対応に時間がかかっております。\n申し訳ございませんが、しばらくお待ちください。')
 			return
 		await janken_proc(ctx, choice)
-
 
 	# card battle
 	@commands.command()

@@ -35,12 +35,10 @@ def get_activity_role(bot, member):
 
 	return activity_role
 
-
 async def remove_activity_role(bot, member):
 		role = get_activity_role(bot, member)
 		if role:
 			await member.remove_roles(role)
-
 
 async def give_activity_role(bot, member, activity_name):
 	# give activity if same already exists

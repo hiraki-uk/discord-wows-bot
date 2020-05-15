@@ -13,16 +13,14 @@ class Roles(commands.Cog):
 		self.bot = bot
 		self.logger = Logger(__name__)
 
-
 	@commands.group()
 	async def roles(self, ctx):
 		""" 役職をいじれるよ！ """
 		if ctx.invoked_subcommand is None:
 			await ctx.send('コマンドも教えてね！')
 
-
 	@roles.command()
-	async def create(self, ctx, name, color):
+	async def create(self, ctx, name, color='red'):
 		""" 役職を作るよ！ roles create '役職の名前' '色（英語で教えてね！）' """
 		try:
 			color = matplotlib.colors.cnames.get(color)
@@ -30,13 +28,23 @@ class Roles(commands.Cog):
 			await ctx.send('名前と色も教えてね！')	
 			return
 
-		if color is not None:
-			color = discord.Colour(int(str(color)[1:], 16))
-			await ctx.guild.create_role(name=name, colour=color)
-			await ctx.send(name + ', いっちょあがり！')
-		else:
-			await ctx.send('そんな色知らないよ！')
+		color = discord.Colour(int(str(color)[1:], 16))
+		await ctx.guild.create_role(name=name, colour=color)
+		await ctx.send(name + ', いっちょあがり！')
 
+	# @roles.command()
+	# async def random(self, ctx, target=None):
+	# 	if target is None:
+	# 		await ctx.send('役職誰にあげるのかわかんないよ〜')
+	# 		return
+	# 	elif not check_user(target):
+	# 		await ctx.send('誰この人！')
+	# 		return
+		
+	# 	user = get_user(name=target)
+	# 	give_role(user, role)
+		
+	# 	await ctx.send('じゃーん！何あげたでしょー')
 
 	@roles.command()
 	async def listnotused(self, ctx):
@@ -54,7 +62,6 @@ class Roles(commands.Cog):
 			b = False
 
 		await ctx.send('はい、終わり！')
-
 
 	@roles.command()
 	async def deletenotused(self, ctx):
@@ -77,7 +84,6 @@ class Roles(commands.Cog):
 		self.logger.debug('Processed deletenotused.')
 		await ctx.send('はい、終わり！')
 
-
 	# @roles.command()
 	# async def hoist(self, ctx):
 	# 	""" 全ての役職をオンラインメンバーとは別に役職メンバーを表示するよ！ """
@@ -86,7 +92,6 @@ class Roles(commands.Cog):
 	# 			await role.edit(hoist=True)
 	# 	await ctx.send(':thumbsup:')
 
-
 	@roles.command()
 	async def mentionoff(self, ctx):
 		""" 全ての役職をメンション不可能にするよ！ """
@@ -94,7 +99,6 @@ class Roles(commands.Cog):
 			if role.mentionable:
 				await role.edit(mentionable=False)
 		await ctx.send(':thumbsup:')
-
 
 	# """
 	# removed roles.on_ready as duplication of 
@@ -127,8 +131,6 @@ class Roles(commands.Cog):
 	# 			give_activity_role(member)
 			
 	# 		self.logger.debug(f'activity found for {member.nick}.')
-
-
 
 	# @commands.Cog.listener()
 	# async def on_member_update(self, before, after):
