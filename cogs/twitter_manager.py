@@ -31,7 +31,6 @@ class Twitter_manager(commands.Cog):
 		self.wowsnews_jp = WowsNewsJP()
 		self.bot = bot
 		statuses = self.wowsnews_jp.get_latest_statuses()
-		statuses.reverse()
 		self.latest_id = statuses[0].id
 		self.logger = Logger(__name__)
 		self.check_task.start()
@@ -54,8 +53,7 @@ class Twitter_manager(commands.Cog):
 
 		for guild in self.bot.guilds:
 			for channel in guild.channels:
-				if channel.name == 'debug':
-				# if channel.name == 'wows-news':
+				if channel.name == 'wows-news':
 					for status in to_send:
 						await channel.send(f'{status.text}\n{_create_url(status)}')
 
