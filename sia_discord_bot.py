@@ -20,7 +20,7 @@ from cogs.shitposting import Shitposting
 from cogs.twitter_manager import Twitter_manager
 from cogs.vc import VoiceChannel
 from cogs.weather import Weather
-from cogs.wows import WorldOfWarships
+from cogs.wows import WowsCog
 from scripts.logger import Logger
 from scripts.scripts import add_cogs
 
@@ -49,8 +49,8 @@ def bot_setup():
 			Shitposting(bot),
 			VoiceChannel(bot),
 			Weather(bot),
-			WorldOfWarships(bot, os.getenv('WOWS_APPLICATION_ID')),
-			# Twitter_manager(bot),
+			WowsCog(bot),
+			Twitter_manager(bot),
 	)
 	return bot, key
 
