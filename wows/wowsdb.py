@@ -1,8 +1,10 @@
-from cogs.cogfunctions.database import Database
-from scripts.logger import Logger
 import json
 
-from .warship import Warship
+from cogs.cogfunctions.database import Database
+from scripts.logger import Logger
+from wows.shipparam import ShipParam
+from wows.warship import Warship
+
 
 class Wows_database:
 	"""
@@ -61,6 +63,23 @@ class Wows_database:
 			is_special INTEGER,
 			name TEXT
 		);
+		CREATE TABLE shipparams(
+			engine TEXT,
+			anti_aircraft TEXT,
+			mobility TEXT,
+			hull TEXT,
+			atbas TEXT,
+			artillery TEXT,
+			torpedoes TEXT,
+			fighters TEXT,
+			ship_id INTEGER PRIMARY KEY,
+			fire_control TEXT,
+			weaponry TEXT,
+			flight_control TEXT,
+			concealment REAL,
+			armour TEXT,
+			dive_bomber TEXT
+		);
 		INSERT INTO version(ships_updated_at) VALUES('initial value');
 		""")
 		self.logger.debug('Created wows database table.')
@@ -83,89 +102,84 @@ class Wows_database:
 		self.database.execute(command, (version,))
 		self.logger.debug('Database updated.')
 	
-	def get_warship(self, name):
+	def get_warship(self, name) -> Warship:
 		"""
 		Get information of a warship of given name.
+		If many data match, returns as list of Warship instance.
 		"""
 		self.logger.debug(f'Searching for a warship with {name=}.')
 		# exact match
 		result = self.database.fetch('SELECT * FROM warships WHERE name=?', (name,))
 		if result:
-			warship = create_warship_from_db(result)
+			warship = Warship.warship_from_tuple(result)
 			return warship
 		results = self.database.fetch(f'SELECT * FROM warships WHERE name LIKE ?', (f'{name}%',), count=3)
-		warships = []
-		if results:
-			for result in results:
-				warship = create_warship_from_db(result)
-				warships.append(warship)
-
+		warships = list(map(lambda result: Warship.warship_from_tuple(result), results))
 		return warships
 
-	def update_warships(self, warships):
+	def get_warships(self) -> list:
 		"""
-		Update database with given warships.
+		Get list of warships as list of Warship instance.
 		"""
-		for warship in warships:
-			# if id not found in database, register
-			result = self.database.execute('SELECT * FROM warships WHERE ship_id=?', (warship['ship_id'],))
-			if result is None:
-				self.register_ship(warship)
-			# if id found but data not up to date, update
-			else:
-				pass
-				# diff = Warship.get_diff(warship, result)
-				# if diff is not None:
-				# 	self.save_updates(diff)
-				# 	self.update_warship(warship)
+		results = self.database.fetch('SELECT * FROM warships', count=-1)
+		warships = list(map(lambda result: Warship.warship_from_tuple(result), results))
+		return warships
 
-	def register_ship(self, data):
+	def get_ship_ids(self) -> list:
+		"""
+		Get ship ids stored in database as a list.
+		"""
+		result = self.database.fetch('SELECT ship_id from warships', count=-1)		
+		return result
+
+	def get_shipparam(self, ship_id) -> ShipParam:
+		"""
+		Get ship parameters of given ship_id.
+		"""
+		result = self.database.fetch('SELECT * FROM shipparams WHERE ship_id=?', (ship_id,))
+		if not result:
+			return None
+		param = ShipParam.shipparam_from_tuple(result)
+		return param
+	
+	def update_warship(self, warship):
+		"""
+		Update database with given warship.
+		"""
+		self.deregister_ship(warship.ship_id)
+		self.register_ship(warship)
+
+	def update_shipparam(self, param:ShipParam):
+		self.deregister_shipparam(param.ship_id)
+		self.register_shipparam(param)
+
+	def register_shipparam(self, param:ShipParam):
+		command = 'INSERT INTO shipparams VALUES (?,?,?,?,?,?,?,' \
+			'?,?,?,?,?,?,?,?)'	
+		values = param.to_tuple()
+		self.database.execute(command, values)
+
+	def deregister_shipparam(self, ship_id:int):
+		command = 'DELETE FROM shipparams WHERE ship_id=?'
+		values = (ship_id,)
+		self.database.execute(command, values)
+
+	def register_ship(self, warship:Warship):
 		"""
 		Register ship into database.
 		"""
-		price_gold = data['price_gold']
-		ship_id_str = data['ship_id_str']
-		has_demo_profile = data['has_demo_profile']
-		images = data['images']
-		modules = data['modules']
-		modules_tree = data['modules_tree']
-		nation = data['nation']
-		is_premium = data['is_premium']
-		ship_id = data['ship_id']
-		price_credit = data['price_credit']
-		default_profile = data['default_profile']
-		upgrades = data['upgrades']
-		tier = data['tier']
-		next_ships = data['next_ships']
-		mod_slots = data['mod_slots']
-		shiptype = data['type']
-		is_special = data['is_special']
-		name = data['name']
-
-		has_demo_profile = 1 if has_demo_profile == 'True' else 0
-		images = str(images)
-		modules = str(modules)
-		modules_tree = str(modules_tree)
-		is_premium = 1 if is_premium == 'True' else 0
-		default_profile = str(default_profile)
-		upgrades = str(upgrades)
-		next_ships = str(next_ships)
-		is_special = 1 if is_special == 'True' else 0
-
 		command = 'INSERT INTO warships VALUES(?,?,?,?,?,?,?,?,?,?,' \
 												'?,?,?,?,?,?,?,?)' 
-		values = (price_gold, ship_id_str, has_demo_profile,
-			images, modules, modules_tree, nation, is_premium,
-			ship_id, price_credit, default_profile, upgrades,
-			tier, next_ships, mod_slots, shiptype, is_special, name)
-	
+		values = warship.to_tuple()
 		self.database.execute(command, values)
-		
-	# def update_warship(self, warship):
-	# 			command = 'INSERT INTO warships VALUES(?,?,?,?,?,?,?,?,?,?,' \
-	# 											'?,?,?,?,?,?,?,?)' 
-	# 	self.database.execute(command, values)	
-
+	
+	def deregister_ship(self, ship_id:int):
+		"""
+		Deregister warship from database.
+		"""
+		command = 'DELETE FROM warships WHERE ship_id=?'
+		values = (ship_id,)
+		self.database.execute(command, values)
 
 	def register_user(self, player, discord_id):
 		"""

@@ -1,60 +1,22 @@
-from scripts.logger import Logger
-from wowspy import Wows, Region
-import math
 import json
+
 import requests
 
+from scripts.logger import Logger
 
-class Wows_API:
-	def __init__(self, key):
-		self.logger = Logger(self.__class__.__name__)
-		self.api = Api(key)
-
-	def get_player_info(self, player_name):
-		self.logger.debug(f'Creating player info for {player_name}.')
-		player = self.api.players(Region.AS, player_name)
-		if not player:
-			return
-		elif player['status'] != 'ok':
-			return
-		player_id = player['data'][0]['account_id']
-		player_data = self.api.player_personal_data(Region.AS, player_id)
-		if not player_data:
-			return
-		elif player_data['status'] != 'ok':
-			return
-		player_data = player_data['data'][str(player_id)]
-		self.logger.debug('Created player_data successfully.')
-		return player_data
-	
-	def get_api_version(self):
-		"""
-		Get api's version.
-		"""
-		self.logger.debug('Fetching version for api.')
-		version = self.api.information_about_encyclopedia()
-		self.logger.debug('Returning api version.')
-		return version
-
-	def get_warships(self):
-		"""
-		Get warships fetched from wows api.
-		"""
-		self.logger.debug('Fetching for warships api.')
-		warships = []
-		warships_count = self.api.get_warships_count()
-		pages = math.ceil(warships_count/100) 
-		warships = self.api.get_warships(pages)
-		self.logger.debug('Created warships.')
-		return warships
+from wows.shipparam import ShipParam
+from wows.warship import Warship
 
 
-class Api:
+class WowsApi:
 	def __init__(self, application_id):
 		self.application_id = application_id
 		self.logger = Logger(self.__class__.__name__)
 
 	def get_warships_count(self):
+		"""
+		Get the number of warships registered in wows API.
+		"""
 		self.logger.debug('Counting warships.')
 		response = requests.get('https://api.worldofwarships.asia/wows/encyclopedia/ships/?' \
 			f'application_id={self.application_id}&limit=1')
@@ -71,8 +33,11 @@ class Api:
 		return warships_count
 
 	def get_warships(self, pages):
+		"""
+		Get list of warships as list of Warship instance.
+		"""
 		self.logger.debug(f'Getting warships for {pages} pages.')
-		warships = []
+		warship_list = []
 		for i in range(pages):
 			response = requests.get('https://api.worldofwarships.asia/wows/encyclopedia/ships/?' \
 				f'application_id={self.application_id}&page_no={i+1}&language=ja')
@@ -85,11 +50,34 @@ class Api:
 				self.logger.critical('Invalid status code.')
 				return
 			values = text_json['data'].values()
-			warships.extend(values)
-		self.logger.debug(f'Created {len(warships)} warships.')
-		return warships
-	
+			for v in values:
+				temp = Warship.warship_from_dict(v)
+				warship_list.append(temp)
+		self.logger.debug(f'Created {len(warship_list)} warships.')
+		return warship_list
+
+	def get_ship_profile(self, ship_id):
+		"""
+		Get ShipParam instance of given ship id.
+		"""
+		response = requests.get('https://api.worldofwarships.asia/wows/encyclopedia/shipprofile/?' \
+			f'application_id={self.application_id}&ship_id={ship_id}')
+		if response.status_code != 200:
+			self.logger.critical('Invalid status code.')
+			return
+		text = response.text
+		text_json = json.loads(text)
+		if text_json['status'] != 'ok':
+			self.logger.debug('Invalid status code.')
+			return
+		param = text_json['data'][str(ship_id)]
+		shipparam = ShipParam.shipparam_from_dict(param)
+		return shipparam
+		
 	def information_about_encyclopedia(self):
+		"""
+		Get when encyclopedia was last updated.
+		"""
 		self.logger.debug('Fetching last ships_updated_at.')
 		response = requests.get('https://api.worldofwarships.asia/wows/encyclopedia/info/?' \
 			f'application_id={self.application_id}&fields=ships_updated_at')
@@ -104,4 +92,3 @@ class Api:
 		version = text_json['data']['ships_updated_at']
 		self.logger.debug(f'Encyclopedia was last updated at {version}.')
 		return version
-		

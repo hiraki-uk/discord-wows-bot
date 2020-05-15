@@ -16,6 +16,7 @@ class Database:
 	def fetch(self, command:str, values=(), count=1):
 		"""
 		Fetch data from database.
+		Set count = -1 to fetch all.
 		"""
 		self.logger.debug(f'Executing script on {self.db_path}.')
 		# connect and execute script
@@ -25,6 +26,8 @@ class Database:
 			cursor.execute(command, values)
 			if count == 1:
 				result = cursor.fetchone()
+			elif count == -1:
+				result = cursor.fetchall()
 			else:
 				result = cursor.fetchmany(count)
 		# sql errors
