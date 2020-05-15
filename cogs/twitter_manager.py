@@ -40,20 +40,23 @@ class Twitter_manager(commands.Cog):
 	async def check_task(self):
 		self.logger.debug('Checking for latest tweets.')
 		statuses = self.wowsnews_jp.get_latest_statuses()
-		statuses.reverse()
 		# return if up to date
 		if self.latest_id == statuses[0].id:
 			self.logger.debug('Twitter_manager is up to date.')
 			return
+		to_send = []
 		for status in statuses:
 			# stop if id is the one saved
 			if status.id == self.latest_id:
 				self.logger.debug('This tweet has already been sent.')
 				break
-			for guild in self.bot.guilds:
-				for channel in guild.channels:
-					if channel.name == 'debug':
-					# if channel.name == 'wows-news':					
+			to_send.insert(0, status)
+
+		for guild in self.bot.guilds:
+			for channel in guild.channels:
+				if channel.name == 'debug':
+				# if channel.name == 'wows-news':
+					for status in to_send:
 						await channel.send(f'{status.text}\n{_create_url(status)}')
 
 		self.latest_id = statuses[0].id
