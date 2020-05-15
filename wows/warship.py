@@ -1,4 +1,3 @@
-from discord import Embed
 
 
 class Warship:
@@ -18,7 +17,10 @@ class Warship:
 		self.tier = data['tier']
 		self.next_ships = data['next_ships']
 		self.mod_slots = data['mod_slots']
-		self.shiptype = data['type']
+		try:
+			self.shiptype = data['type']
+		except KeyError:
+			self.shiptype = data['shiptype']
 		self.is_special = data['is_special']
 		self.name = data['name']
 
@@ -68,15 +70,6 @@ class Warship:
 			'name': self.name
 		}
 		return warship_dict
-
-	def embed_builder(self):
-		embed = Embed(colour=0x793DB6)
-		a = embed.add_field
-		d = self.warship_dict
-		a(name=d['name'], value=f'T{d["tier"]} {d["nation"][:2]} {d["shiptype"]}')
-		# a(name=)
-
-		return embed
 
 	@staticmethod
 	def warship_from_tuple(data:tuple):

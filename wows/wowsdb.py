@@ -111,9 +111,11 @@ class Wows_database:
 		# exact match
 		result = self.database.fetch('SELECT * FROM warships WHERE name=?', (name,))
 		if result:
+			self.logger.debug('Found exact match.')
 			warship = Warship.warship_from_tuple(result)
 			return warship
 		results = self.database.fetch(f'SELECT * FROM warships WHERE name LIKE ?', (f'{name}%',), count=3)
+		self.logger.debug('Found close match.')
 		warships = list(map(lambda result: Warship.warship_from_tuple(result), results))
 		return warships
 
