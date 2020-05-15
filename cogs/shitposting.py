@@ -26,6 +26,11 @@ class Shitposting(commands.Cog):
 		with open('res/jow.txt', 'r', encoding='utf-8') as f:
 			await ctx.send('```' + f.read() + '```')
 
+	@commands.command()
+	async def kuitan(self, ctx):
+		""" 喰いタンを許すな """
+		with open('res/kuitan.txt', 'r', encoding='utf-8') as f:
+			await ctx.send('```' + f.read() + '```')
 	# janken 
 	@commands.command()
 	async def janken(self, ctx, choice=None):
