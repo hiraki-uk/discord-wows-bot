@@ -112,7 +112,7 @@ class WowsCog(commands.Cog):
 		if fire_control is not None:
 			distance = fire_control['distance']
 			distance_increase = fire_control['distance_increase']
-			a(name='射程', value=f'{distance}km　distance_increaseﾅﾆｺﾚ{distance_increase}', inline=False)
+			a(name='射程', value=f'{distance}km', inline=False)
 
 		concealment = ast.literal_eval(s['concealment'])
 		if concealment is not None:
