@@ -84,9 +84,9 @@ class WowsCog(commands.Cog):
 			health = hull['health']
 			artillery_barrels = hull['artillery_barrels']
 			if torp_barrels == 0:
-				a(name='船体性能', value=f'体力{health}　主砲{artillery_barrels}基', inline=False)
+				a(name='船体性能', value=f'体力{health}({health+tier*350})　主砲{artillery_barrels}基', inline=False)
 			else:
-				a(name='船体性能', value=f'体力{health}　主砲{artillery_barrels}基　魚雷{torp_barrels}基', inline=False)
+				a(name='船体性能', value=f'体力{health}({health+tier*350})　主砲{artillery_barrels}基　魚雷{torp_barrels}基', inline=False)
 
 		artillery = ast.literal_eval(s['artillery'])
 		if artillery is not None:
