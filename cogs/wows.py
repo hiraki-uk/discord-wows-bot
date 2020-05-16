@@ -27,7 +27,7 @@ class WowsCog(commands.Cog):
 		self.wowsdb = Wows_database(db_path)
 
 	@commands.command()
-	async def param(self, ctx, name=None):
+	async def param(self, ctx, *, name):
 		"""
 		そのぽふねのデータ教えてあげる！
 		"""
@@ -41,15 +41,20 @@ class WowsCog(commands.Cog):
 			self.logger.info('Found exact match for a warship.')
 			embed = self.embed_builder(result)
 			await ctx.send(embed=embed)
-		elif result is None:
+		#another exact match
+		elif len(result) == 1:
+			self.logger.info('Found exact match for a warship.')
+			embed = self.embed_builder(result[0])
+			await ctx.send(embed=embed)
+		elif not result:
 			self.logger.debug('No result found.')
 			await ctx.send('そんなもんねーよ！あ、日本艦は漢字で書いてね♡')
 			return
 		else:
-			self.logger.info('Found multiple match for a warship.')
-			name_list = list(map(lambda ship:ship.name, result))
+			self.logger.info('Found multiple matches.')
+			name_list = map(lambda ship:ship.name, result)
 			mes = 'いっぱいヒットしちゃったよ～\n' \
-				'```' + str(name_list) + '```'
+				'```' + ', '.join(name_list) + '```'
 			await ctx.send(mes)
 
 	def embed_builder(self, warship:Warship):
