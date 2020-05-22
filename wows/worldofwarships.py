@@ -1,7 +1,11 @@
+import math
+
+from tqdm import tqdm
+
 from scripts.logger import Logger
 from wows.wowsapi import WowsApi
 from wows.wowsdb import Wows_database
-import math
+
 
 class WorldofWarships:
 	def __init__(self, key, db_path):
@@ -62,3 +66,22 @@ class WorldofWarships:
 
 		self.logger.debug('Ship parameters updated.')
 
+	def update_modules(self):
+		"""
+		Update ship modules table in database.
+		"""
+		self.logger.debug('Updating modules in database.')
+		warships = self.wowsdb.get_warships()
+		pbar = tqdm(total=len(warships))
+		module_list = []
+		for warship in warships:
+			module_ids = warship.get_module_id_list()
+			for module_id in module_ids:
+				temp = self.wowsdb.get_module(module_id)
+				if temp:
+					continue
+				module = self.wowsapi.get_module(module_id)
+				self.wowsdb.update_module(module)
+			pbar.update()
+		pbar.close()
+		self.logger.debug('Modules updated.')

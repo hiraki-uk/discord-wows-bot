@@ -63,7 +63,15 @@ class TestWowsDb(unittest.TestCase):
 		res = w.get_shipparam(3248371408)
 		self.assertNotEqual(res, None)
 
-
+"""
+Temporal class for executing scripts.
+"""
+class TestTemp(unittest.TestCase):
+	def test_get_ship_id(self):
+		w = WorldofWarships(key, db_path)
+		w.update_modules()
+		res = w.wowsdb.get_module(3328978640)
+		self.assertNotEqual(res, None)
 # class TestWows(unittest.TestCase):
 # 	def test_update_warships(self):
 # 		w = WorldofWarships(key, db_path)	

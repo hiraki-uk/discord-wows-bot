@@ -1,16 +1,16 @@
-from logging import Formatter, handlers, StreamHandler, getLogger, DEBUG
+from logging import Formatter, handlers, StreamHandler, getLogger, DEBUG, INFO, CRITICAL
 
 class Logger:
 	__slots__ = ('logger',)
 
 	def __init__(self, name=__name__):
 		self.logger = getLogger(name)
-		self.logger.setLevel(DEBUG)
+		self.logger.setLevel(INFO)
 		formatter = Formatter("[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s")
 
 		# stdout
 		handler = StreamHandler()
-		handler.setLevel(DEBUG)
+		handler.setLevel(INFO)
 		handler.setFormatter(formatter)
 		self.logger.addHandler(handler)
 
@@ -19,7 +19,7 @@ class Logger:
 												encoding='utf-8',
 												# maxBytes=1048576,
 												backupCount=1)
-		handler.setLevel(DEBUG)
+		handler.setLevel(INFO)
 		handler.setFormatter(formatter)
 		self.logger.addHandler(handler)
 		del formatter, handler

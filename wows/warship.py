@@ -1,3 +1,6 @@
+import ast
+
+from wows.module import ShipModule
 
 
 class Warship:
@@ -18,9 +21,9 @@ class Warship:
 		self.next_ships = data['next_ships']
 		self.mod_slots = data['mod_slots']
 		try:
-			self.shiptype = data['type']
-		except KeyError:
 			self.shiptype = data['shiptype']
+		except KeyError:
+			self.shiptype = data['type']
 		self.is_special = data['is_special']
 		self.name = data['name']
 
@@ -48,6 +51,15 @@ class Warship:
 			self.tier, self.next_ships, self.mod_slots, self.shiptype, self.is_special, self.name)
 		return warship_tuple
 	
+	def get_module_id_list(self):
+		if not self.modules:
+			return
+		module_dict = ast.literal_eval(self.modules)
+		module_list = []
+		for temp in module_dict.values():
+			module_list.extend(temp)
+		return module_list
+
 	def to_dict(self):
 		warship_dict = {
 			'price_gold': self.price_gold,

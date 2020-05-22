@@ -2,6 +2,7 @@ import json
 
 from cogs.cogfunctions.database import Database
 from scripts.logger import Logger
+from wows.module import ShipModule
 from wows.shipparam import ShipParam
 from wows.warship import Warship
 
@@ -80,6 +81,16 @@ class Wows_database:
 			armour TEXT,
 			dive_bomber TEXT
 		);
+		CREATE TABLE modules(
+			name TEXT,
+			image TEXT,
+			tag TEXT,
+			module_id_str TEXT,
+			module_id INTEGER PRIMARY KEY,
+			type TEXT,
+			price_credit INTEGER,
+			profile TEXT
+		);
 		INSERT INTO version(ships_updated_at) VALUES('initial value');
 		""")
 		self.logger.debug('Created wows database table.')
@@ -143,7 +154,22 @@ class Wows_database:
 			return None
 		param = ShipParam.shipparam_from_tuple(result)
 		return param
+
+	def get_module(self, module_id) -> ShipModule:
+		"""
+		Get ship module of given module id.
+		"""
+		result = self.database.fetch('SELECT * FROM modules WHERE module_id=?', (module_id,))
+		shipmodule = ShipModule.module_from_tuple(result)
+		return shipmodule
 	
+	def update_module(self, module:ShipModule):
+		"""
+		Update database with given module.
+		"""
+		self.deregister_module(module.module_id)
+		self.register_module(module)
+
 	def update_warship(self, warship):
 		"""
 		Update database with given warship.
@@ -166,6 +192,19 @@ class Wows_database:
 		values = (ship_id,)
 		self.database.execute(command, values)
 
+	def register_module(self, module:ShipModule):
+		"""
+		Register module into database.
+		"""
+		command = 'INSERT INTO modules VALUES(?,?,?,?,?,?,?,?)'
+		values = module.to_tuple()
+		self.database.execute(command, values)
+
+	def deregister_module(self, module_id:int):
+		command = 'DELETE FROM modules WHERE module_id=?'
+		values = (module_id,)
+		self.database.execute(command, values)
+		
 	def register_ship(self, warship:Warship):
 		"""
 		Register ship into database.

@@ -12,10 +12,10 @@ from discord.ext import commands, tasks
 
 from cogs.cogfunctions.database import Database
 from scripts.logger import Logger
+from scripts.wows_embed_builder import Embed_builder
 from wows.shipparam import ShipParam
 from wows.warship import Warship
 from wows.wowsdb import Wows_database
-
 
 db_path = 'wows.db'
 
@@ -39,12 +39,12 @@ class WowsCog(commands.Cog):
 		# exact match
 		if isinstance(result, Warship):
 			self.logger.info('Found exact match for a warship.')
-			embed = self.embed_builder(result)
+			embed = Embed_builder().embed_builder(result)
 			await ctx.send(embed=embed)
 		#another exact match
 		elif len(result) == 1:
 			self.logger.info('Found exact match for a warship.')
-			embed = self.embed_builder(result[0])
+			embed = Embed_builder().embed_builder(result[0])
 			await ctx.send(embed=embed)
 		elif not result:
 			self.logger.debug('No result found.')
@@ -68,6 +68,50 @@ class WowsCog(commands.Cog):
 		embed = Embed(colour=0x793DB6, title=d['name'], description=f'T{tier} {nation.upper()} {shiptype}')
 		a = embed.add_field
 
+		modules = ast.literal_eval(d['modules'])
+		if modules is not None:
+			for moduletype, module_ids in modules:
+				if module_ids:
+					for module_id in module_ids:
+						ship_module = self.wowsdb.get_module(module_id)
+						temp = ship_module['profile']
+						profile = ast.literal_eval(temp)
+						for key, value in profile:
+							if key == 'engine':
+								max_speed = value['max_speed']
+								a(name='速力', value=f'{max_speed}kts')
+							elif key == 'torpedo_bomber':
+								pass
+							elif key == 'fighter':
+								pass
+							elif key == 'hull':
+								aa_barrels = value['aiti_aircraft_barrels']
+								torp_barrels = value['torpedoes_barrels']
+								health = value['health']
+								planes = value['planes_amount']
+								artillery_barrels = value['artillery_barrels']
+								atba_barrels = value['atba_barrels']
+							elif key == 'artillery':
+								rotation_time = value['rotation_time']
+								max_ap = value['max_damage_AP']
+								max_he = value['max_damage_HE']
+								rate = value['gun_rate']
+							elif key == 'torpedoes':
+								torp_speed = value['torpedo_speed']
+								shot_speed = value['shot_speed']
+								max_damage = value['max_damage']
+								distance = value['distance']
+							elif key == 'fire_control':
+								distance = value['distance']
+								distance_increase = value['distance_increase']
+							elif key == 'flight_control':
+								pass 
+							elif key == 'dive_bomber':
+								pass
+							else:
+								self.logger.critical('Unknown profile found.')
+						a(name=moduletype, value=profile)
+
 		s = self.wowsdb.get_shipparam(warship.ship_id)
 		s = s.to_dict()
 
@@ -84,21 +128,27 @@ class WowsCog(commands.Cog):
 			health = hull['health']
 			artillery_barrels = hull['artillery_barrels']
 			if torp_barrels == 0:
-				a(name='船体性能', value=f'体力{health}({health+tier*350})　主砲{artillery_barrels}基', inline=False)
+				# a(name='船体性能', value=f'体力{health}({health+tier*350})　主砲{artillery_barrels}基', inline=False)
+				hull_status = f'体力{health}({health+tier*350})　主砲{artillery_barrels}基'
 			else:
-				a(name='船体性能', value=f'体力{health}({health+tier*350})　主砲{artillery_barrels}基　魚雷{torp_barrels}基', inline=False)
+				# a(name='船体性能', value=f'体力{health}({health+tier*350})　主砲{artillery_barrels}基　魚雷{torp_barrels}基', inline=False)
+				hull_status = f'体力{health}({health+tier*350})　主砲{artillery_barrels}基　魚雷{torp_barrels}基'
 
 		artillery = ast.literal_eval(s['artillery'])
 		if artillery is not None:
+			slots = artillery['slots']
+			slots = slots.values()
+			slots_str = ', '.join(map(lambda slot:f'{slot["guns"]}基{slot["barrels"]*slot["guns"]}門', slots))
+
 			max_dispersion = artillery['max_dispersion']
 			shot_delay = artillery['shot_delay']
 			shells = artillery['shells']
+			a(name='主砲', value=slots_str)
 			for key, shell in shells.items():
 				if key == 'HE':
 					a(name=f'{key}', value=f'{shell["bullet_speed"]}ms^-1　最大{shell["damage"]}　装填{shot_delay}s　発火率{shell["burn_probability"]}%', inline=False)
 				else:
 					a(name=f'{key}', value=f'{shell["bullet_speed"]}ms^-1　最大{shell["damage"]}　装填{shot_delay}s', inline=False)
-				
 		torpedoes = ast.literal_eval(s['torpedoes'])
 		if torpedoes is not None:
 			visibility_dist = torpedoes['visibility_dist']
@@ -108,11 +158,11 @@ class WowsCog(commands.Cog):
 			max_damage = torpedoes['max_damage']
 			a(name='魚雷性能', value=f'被発見{visibility_dist}km　装填{reload_time}s　雷速{torp_speed}kts^-1　最大{max_damage}', inline=False)
 
-		fire_control = ast.literal_eval(s['fire_control'])
-		if fire_control is not None:
-			distance = fire_control['distance']
-			distance_increase = fire_control['distance_increase']
-			a(name='射程', value=f'{distance}km', inline=False)
+		# fire_control = ast.literal_eval(s['fire_control'])
+		# if fire_control is not None:
+		# 	distance = fire_control['distance']
+		# 	distance_increase = fire_control['distance_increase']
+		# 	a(name='射程', value=f'{distance}km', inline=False)
 
 		concealment = ast.literal_eval(s['concealment'])
 		if concealment is not None:

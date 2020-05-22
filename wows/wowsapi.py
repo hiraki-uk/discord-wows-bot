@@ -3,7 +3,7 @@ import json
 import requests
 
 from scripts.logger import Logger
-
+from wows.module import ShipModule
 from wows.shipparam import ShipParam
 from wows.warship import Warship
 
@@ -13,6 +13,25 @@ class WowsApi:
 		self.application_id = application_id
 		self.logger = Logger(self.__class__.__name__)
 
+	def get_module(self, module_id):
+		"""
+		Get the module data of a given module id.
+		"""
+		self.logger.debug(f'Fetching module data for {module_id}.')
+		response = requests.get('https://api.worldofwarships.ru/wows/encyclopedia/modules/?' \
+			f'application_id={self.application_id}&module_id={module_id}')
+		if response.status_code != 200:
+			self.logger.critical('Invalid status code.')
+			return
+		text = response.text
+		text_json = json.loads(text)
+		if text_json['status'] != 'ok':
+			self.logger.critical('Invalid status code.')
+			return
+		data = text_json['data'][str(module_id)]
+		shipmodule = ShipModule.module_from_dict(data)
+		return shipmodule
+		
 	def get_warships_count(self):
 		"""
 		Get the number of warships registered in wows API.
