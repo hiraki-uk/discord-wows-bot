@@ -167,9 +167,9 @@ class WowsCog(commands.Cog):
 			shells = artillery['shells']
 			for key, shell in shells.items():
 				if key == 'HE':
-					shells['HE'] = f'{shell["bullet_speed"]}ms^-1　最大{shell["damage"]}　装填{shot_delay}s　発火率{shell["burn_probability"]}%'
+					shells['HE'] = f'初速{shell["bullet_speed"]}ms^-1　最大{shell["damage"]}　装填{shot_delay}s　発火率{shell["burn_probability"]}%'
 				else:
-					shells['AP'] = f'{shell["bullet_speed"]}ms^-1　最大{shell["damage"]}　装填{shot_delay}s'
+					shells[key] = f'初速{shell["bullet_speed"]}ms^-1　最大{shell["damage"]}　装填{shot_delay}s'
 
 		torpedoes_eval = ast.literal_eval(s['torpedoes'])
 		if torpedoes_eval is not None:
@@ -181,17 +181,21 @@ class WowsCog(commands.Cog):
 			detect_dist_plane = concealment['detect_distance_by_plane']
 			detect_dist_ship = concealment['detect_distance_by_ship']
 			if description['tier'] < 8:
-				best_concealment = detect_dist_ship * 0.9 * 0.97
+				best_concealment_ship = detect_dist_ship * 0.9 * 0.97
+				best_concealment_plane = detect_dist_plane * 0.9 * 0.97
 			else:
-				best_concealment = detect_dist_ship * 0.9 * 0.9 * 0.97
-			best_concealment = round(best_concealment, 2)
-			description['detect_dist_plane'] = detect_dist_plane
-			description['detect_dist_ship'] = detect_dist_ship
-			description['best_concealment'] = best_concealment
+				best_concealment_ship = detect_dist_ship * 0.9 * 0.9 * 0.97
+				best_concealment_plane = detect_dist_plane * 0.9 * 0.9 * 0.97
+
+			description['detect_dist_plane'] = round(detect_dist_plane, 2)
+			description['best_concealment_plane'] = round(best_concealment_plane, 2)
+			description['detect_dist_ship'] = round(detect_dist_ship, 2)
+			description['best_concealment_ship'] = round(best_concealment_ship, 2)
 	
 		##################
 		# CREATING EMBED #
 		##################
+		self.logger.debug('Creating embed.')
 		embed = Embed(colour=0x793DB6, title=d['name'],
 				description=f'T{d["tier"]} {d["nation"].upper()} {d["shiptype"]}')
 		a = embed.add_field
@@ -208,28 +212,34 @@ class WowsCog(commands.Cog):
 				if hull['aa_barrels'] != 0:
 					values += f'対空砲{hull["aa_barrels"]}基'
 				a(name='副兵装', value=values)
-		
-		if artilleries:
-			for artillery in artilleries:
-				# both ap and he
-				if artillery['max_ap'] != 0 and artillery['max_he'] != 0:
-					values = f'AP最大 {artillery["max_ap"]}　HE最大 {artillery["max_he"]}　180度旋回{artillery["rotation_time"]}s　装填{round(60/artillery["rate"], 1)}s'
-				# ships only ap
-				elif artillery['max_he'] == 0 and artillery['max_ap'] != 0:
-					values = f'AP最大 {artillery["max_ap"]}　180度旋回{artillery["rotation_time"]}s　装填{round(60/artillery["rate"], 1)}s'
-				# ships only he
-				elif artillery['max_ap'] == 0 and artillery['max_he'] != 0:
-					values = f'HE最大 {artillery["max_he"]}　180度旋回{artillery["rotation_time"]}s　装填{round(60/artillery["rate"], 1)}s'
-				else:
-					pass
-				a(name='砲弾', value=values, inline=False)
+				
+		a(name='隠蔽', value=f'最良艦艇{description["best_concealment_ship"]}km　素{description["detect_dist_ship"]}km　' \
+			f'最良航空{description["best_concealment_plane"]}km　素{description["detect_dist_plane"]}km', inline=False)		
+			
+		# if artilleries:
+		# 	for artillery in artilleries:
+		# 		# both ap and he
+		# 		if artillery['max_ap'] != 0 and artillery['max_he'] != 0:
+		# 			values = f'AP最大 {artillery["max_ap"]}　HE最大 {artillery["max_he"]}　180度旋回{artillery["rotation_time"]}s　装填{round(60/artillery["rate"], 1)}s'
+		# 		# ships only ap
+		# 		elif artillery['max_he'] == 0 and artillery['max_ap'] != 0:
+		# 			values = f'AP最大 {artillery["max_ap"]}　180度旋回{artillery["rotation_time"]}s　装填{round(60/artillery["rate"], 1)}s'
+		# 		# ships only he
+		# 		elif artillery['max_ap'] == 0 and artillery['max_he'] != 0:
+		# 			values = f'HE最大 {artillery["max_he"]}　180度旋回{artillery["rotation_time"]}s　装填{round(60/artillery["rate"], 1)}s'
+		# 		else:
+		# 			pass
+		# 		a(name='砲弾', value=values, inline=False)
+		for key, value in shells.items():
+			a(name=key, value=value, inline=False)
+				
 
 		if torpedoes:
 			for torp in torpedoes:
 				values = f'最大{torp["max_damage"]}　' \
 					f'雷速{torp["speed"]}kts　射程{torp["distance"]}km　装填{round(60 / torp["shot"], 1)}s'
 				a(name='魚雷', value=values, inline=False)
-
+		if fire_controls:
 			for fire_control in fire_controls:
 				values = f'射程{fire_control["distance"]}km　射程向上(?){fire_control["distance_increase"]}'
 				a(name='射撃管制', value=values, inline=False)
