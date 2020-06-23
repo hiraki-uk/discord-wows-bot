@@ -18,8 +18,8 @@ class WowsApi:
 		Get the module data of a given module id.
 		"""
 		self.logger.debug(f'Fetching module data for {module_id}.')
-		response = requests.get('https://api.worldofwarships.ru/wows/encyclopedia/modules/?' \
-			f'application_id={self.application_id}&module_id={module_id}')
+		response = requests.get('https://api.worldofwarships.asia/wows/encyclopedia/modules/?' \
+			f'application_id={self.application_id}&module_id={module_id}&language=en')
 		if response.status_code != 200:
 			self.logger.critical('Invalid status code.')
 			return
@@ -38,7 +38,7 @@ class WowsApi:
 		"""
 		self.logger.debug('Counting warships.')
 		response = requests.get('https://api.worldofwarships.asia/wows/encyclopedia/ships/?' \
-			f'application_id={self.application_id}&limit=1')
+			f'application_id={self.application_id}&limit=1&language=en')
 		if response.status_code != 200:
 			self.logger.critical('Invalid status code.')
 			return
@@ -59,7 +59,7 @@ class WowsApi:
 		warship_list = []
 		for i in range(pages):
 			response = requests.get('https://api.worldofwarships.asia/wows/encyclopedia/ships/?' \
-				f'application_id={self.application_id}&page_no={i+1}&language=ja')
+				f'application_id={self.application_id}&page_no={i+1}&language=en')
 			if response.status_code != 200:
 				self.logger.critical('Invalid status code.')
 				return
@@ -80,7 +80,7 @@ class WowsApi:
 		Get ShipParam instance of given ship id.
 		"""
 		response = requests.get('https://api.worldofwarships.asia/wows/encyclopedia/shipprofile/?' \
-			f'application_id={self.application_id}&ship_id={ship_id}')
+			f'application_id={self.application_id}&ship_id={ship_id}&language=en')
 		if response.status_code != 200:
 			self.logger.critical('Invalid status code.')
 			return
@@ -99,7 +99,7 @@ class WowsApi:
 		"""
 		self.logger.debug('Fetching last ships_updated_at.')
 		response = requests.get('https://api.worldofwarships.asia/wows/encyclopedia/info/?' \
-			f'application_id={self.application_id}&fields=ships_updated_at')
+			f'application_id={self.application_id}&fields=ships_updated_at&language=en')
 		if response.status_code != 200:
 			self.logger.critical('Invalid status code.')
 			return

@@ -4,13 +4,14 @@ class Logger:
 	__slots__ = ('logger',)
 
 	def __init__(self, name=__name__):
+		level = INFO
 		self.logger = getLogger(name)
-		self.logger.setLevel(INFO)
+		self.logger.setLevel(level)
 		formatter = Formatter("[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s")
 
 		# stdout
 		handler = StreamHandler()
-		handler.setLevel(INFO)
+		handler.setLevel(level)
 		handler.setFormatter(formatter)
 		self.logger.addHandler(handler)
 
@@ -19,7 +20,7 @@ class Logger:
 												encoding='utf-8',
 												# maxBytes=1048576,
 												backupCount=1)
-		handler.setLevel(INFO)
+		handler.setLevel(level)
 		handler.setFormatter(formatter)
 		self.logger.addHandler(handler)
 		del formatter, handler

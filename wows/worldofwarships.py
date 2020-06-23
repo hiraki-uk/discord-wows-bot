@@ -17,8 +17,8 @@ class WorldofWarships:
 	def update(self):
 		# check version
 		version_db = self.wowsdb.get_db_version()
-		version_api = self.wowsapi.get_api_version()
-
+		version_api = self.wowsapi.information_about_encyclopedia()
+			
 		# return if version is up to date.
 		if version_db == version_api:
 			self.logger.debug(f'Returning as database has latest version {version_db}.')
@@ -36,11 +36,12 @@ class WorldofWarships:
 		self.logger.debug('Updating warships in database.')
 		warships_count = self.wowsapi.get_warships_count()
 		pages = math.ceil(warships_count / 100)
-
+		
 		warships_api = self.wowsapi.get_warships(pages)
 		warships_db = self.wowsdb.get_warships()
 		warships_db_ids = list(map(lambda warship:warship.ship_id, warships_db))
 
+		pbar = tqdm(total=warships_count)
 		for warship in warships_api:
 			# if warship not found in db, register
 			if warship.ship_id not in warships_db_ids:
@@ -52,6 +53,8 @@ class WorldofWarships:
 				# if warship from api differes from warship in db, update
 				if warship != warship_db:
 					self.wowsdb.update_warship(warship)
+			pbar.update()
+		pbar.close()
 		self.logger.debug('Warships updated.')
 	
 	def update_shipparams(self):
@@ -60,10 +63,12 @@ class WorldofWarships:
 		"""
 		self.logger.debug('Updating shipparams in database.')
 		ship_ids = self.wowsdb.get_ship_ids()
+		pbar = tqdm(total=len(ship_ids))
 		for ship_id in ship_ids:
 			param = self.wowsapi.get_ship_profile(ship_id[0])
 			self.wowsdb.update_shipparam(param)
-
+			pbar.update()
+		pbar.close()
 		self.logger.debug('Ship parameters updated.')
 
 	def update_modules(self):
@@ -75,6 +80,7 @@ class WorldofWarships:
 		pbar = tqdm(total=len(warships))
 		module_list = []
 		for warship in warships:
+			pbar.update()
 			module_ids = warship.get_module_id_list()
 			for module_id in module_ids:
 				temp = self.wowsdb.get_module(module_id)
@@ -82,6 +88,5 @@ class WorldofWarships:
 					continue
 				module = self.wowsapi.get_module(module_id)
 				self.wowsdb.update_module(module)
-			pbar.update()
 		pbar.close()
 		self.logger.debug('Modules updated.')
