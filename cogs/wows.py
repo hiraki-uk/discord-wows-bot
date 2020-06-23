@@ -32,7 +32,7 @@ class WowsCog(commands.Cog):
 		"""
 		self.logger.info('Recieved param command.')
 		if name is None:
-			await ctx.send('どのぽふねのデータがほしいの？\n日本艦は漢字で登録されてるから気を付けて！')
+			await ctx.send('どのぽふねのデータがほしいの？\nうむらると？諦めろ')
 			return
 		result = self.wowsdb.get_warship(name)
 		# exact match
@@ -47,7 +47,7 @@ class WowsCog(commands.Cog):
 			await ctx.send(embed=embed)
 		elif not result:
 			self.logger.debug('No result found.')
-			await ctx.send('そんなもんねーよ！あ、日本艦は漢字で書いてね♡')
+			await ctx.send('誰よその女！')
 			return
 		else:
 			self.logger.info('Found multiple matches.')
