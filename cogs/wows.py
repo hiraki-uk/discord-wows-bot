@@ -76,7 +76,7 @@ class WowsCog(commands.Cog):
 		description['tier'] = d['tier']
 		description['nation'] = d['nation'][:2]
 		description['shiptype'] = d['shiptype']
-		description['ship_id_str'] = d['ship_id_str']
+		description['ship_id'] = d['ship_id']
 
 		modules = ast.literal_eval(d['modules'])
 		# if modules field found
@@ -201,7 +201,7 @@ class WowsCog(commands.Cog):
 		# CREATING EMBED #
 		##################
 		self.logger.debug('Creating embed.')
-		embed = Embed(colour=0x793DB6, title=description['name'] + f' {description["ship_id_str"]}',
+		embed = Embed(colour=0x793DB6, title=description['name'] + f' {description["ship_id"]}',
 				description=f'T{description["tier"]} {description["nation"].upper()} {description["shiptype"]}')
 		a = embed.add_field
 
