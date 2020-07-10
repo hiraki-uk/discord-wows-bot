@@ -56,7 +56,11 @@ class WowsCog(commands.Cog):
 				'```' + ', '.join(name_list) + '```'
 			await ctx.send(mes)
 
-	def embed_builder(self, warship:Warship):
+	def embed_builder(self, warship:Warship, full=False):
+		"""
+		Creates and returns embed.
+		set full to True for full configuration.
+		"""
 		description = {}
 		engines = []
 		hulls = []
@@ -72,6 +76,7 @@ class WowsCog(commands.Cog):
 		description['tier'] = d['tier']
 		description['nation'] = d['nation'][:2]
 		description['shiptype'] = d['shiptype']
+		description['ship_id_str'] = d['ship_id_str']
 
 		modules = ast.literal_eval(d['modules'])
 		# if modules field found
@@ -196,8 +201,8 @@ class WowsCog(commands.Cog):
 		# CREATING EMBED #
 		##################
 		self.logger.debug('Creating embed.')
-		embed = Embed(colour=0x793DB6, title=d['name'],
-				description=f'T{d["tier"]} {d["nation"].upper()} {d["shiptype"]}')
+		embed = Embed(colour=0x793DB6, title=description['name'] + f' {description["ship_id_str"]}',
+				description=f'T{description["tier"]} {description["nation"].upper()} {description["shiptype"]}')
 		a = embed.add_field
 
 		if hulls:

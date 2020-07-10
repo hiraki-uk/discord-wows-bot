@@ -16,11 +16,14 @@ def update_wows():
 	print('Updating wows.')
 	w = WorldofWarships(key, db_path)	
 	w.update()
-
+	print('Updated wows.')
 def update_modules():
+	print('Updating modules.')
 	w = WorldofWarships(key, db_path)
 	w.update_modules()
+	print('Updated modules.')
 
 
 if __name__ == '__main__':
+	update_wows()
 	update_modules()
