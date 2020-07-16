@@ -1,92 +1,118 @@
-import math
+import json
 
-from tqdm import tqdm
+from wows.warship import Warship
 
-from scripts.logger import Logger
-from wows.wowsapi import WowsApi
-from wows.wowsdb import Wows_database
+gp_path = 'wows/gameparams.json'
+ships_path = 'wows/ships.json'
+ship_ids_path = 'wows/ship_ids.txt'
 
 
-class WorldofWarships:
-	def __init__(self, key, db_path):
-		self.logger = Logger(self.__class__.__name__)
-		self.logger.debug('Initializing wows class.')
-		self.wowsapi = WowsApi(key)
-		self.wowsdb = Wows_database(db_path)
+def _ships_from_gameparams():
+	with open(gp_path, 'r') as f:
+		s = f.read()
+	s_jsn = json.loads(s)
+	ships_json = {}
 
-	def update(self):
-		# check version
-		version_db = self.wowsdb.get_db_version()
-		version_api = self.wowsapi.information_about_encyclopedia()
-			
-		# return if version is up to date.
-		if version_db == version_api:
-			self.logger.debug(f'Returning as database has latest version {version_db}.')
-			return
-		self.update_warships()
-		self.update_shipparams()
+	for param_key, param_value in s_jsn.items():
+		try:
+			if param_value['typeinfo']['type'] == 'Ship':
+				ships_json[param_key] = param_value
+				print(f'Found {param_key}.')
+		except:
+			print('Typeinfo key not found.')
 
-		# finally update version
-		self.wowsdb.update_version(version_api)
+	with open(ships_path, 'w') as f:
+		f.write(json.dumps(ships_json, indent=4))
 
-	def update_warships(self):
-		"""
-		Update warships table in database.
-		"""
-		self.logger.debug('Updating warships in database.')
-		warships_count = self.wowsapi.get_warships_count()
-		pages = math.ceil(warships_count / 100)
-		
-		warships_api = self.wowsapi.get_warships(pages)
-		warships_db = self.wowsdb.get_warships()
-		warships_db_ids = list(map(lambda warship:warship.ship_id, warships_db))
+def _ship_ids_froms_ships():
+	with open(ships_path, 'r') as f:
+		s = f.read()
+	s_json = json.loads(s)
+	ship_ids = [ship_id for ship_id in s_json.keys()]
+	with open(ship_ids_path, 'w') as f:
+		f.write('\n'.join(ship_ids))
 
-		pbar = tqdm(total=warships_count)
-		for warship in warships_api:
-			# if warship not found in db, register
-			if warship.ship_id not in warships_db_ids:
-				self.wowsdb.register_ship(warship)
-			else:
-				index = warships_db_ids.index(warship.ship_id)
-				warship_db = warships_db[index]
-				assert warship.ship_id == warship_db.ship_id
-				# if warship from api differes from warship in db, update
-				if warship != warship_db:
-					self.wowsdb.update_warship(warship)
-			pbar.update()
-		pbar.close()
-		self.logger.debug('Warships updated.')
+def _clean_data():
+	with open(ships_path, 'r') as f:
+		s = f.read()
+	s_json = json.loads(s)
+	for key, value in s_json.items():
+		l = ['AIParams', 'A_Directors', 'Cameras', 'DockCamera', 'ShipAbilities', 'UnderwaterCamera']
+		for i in range(len(l)):
+			try:
+				del value[l[i]]
+			except Exception as e:
+				pass
+	with open('clean_ships.json', 'w') as f:
+		f.write(json.dumps(s_json, indent=4))
+
+def create_warship(name:str) -> Warship:
+	"""
+	Create Warship instance of a given name.
+	"""
+	with open(ships_path, 'r') as f:
+		s = f.read()
+	s_json = json.loads(s)
+	warship = Warship(s_json[name])
+	return warship
+
+def search_ship(name:str):
+	"""
+	Search for Warship instance of a given name.
+	Returns list of names if multiple results found.
+
+	Returns
+	-------
+	result_list: list of warship and name
+	name_list: list of str
+	"""
+	with open(ship_ids_path, 'r') as f:
+		s = f.readlines()
+	ships = [line for line in s if name.lower() in line.lower()]
+	if ships == 0:
+		return
+	elif len(ships) == 1:
+		ship = ships[0].strip()
+		return [create_warship(ship), _create_name(ship)]
+	return list(map(lambda x:_create_name(x), ships)) 
 	
-	def update_shipparams(self):
-		"""
-		Update shipparameters table in database.
-		"""
-		self.logger.debug('Updating shipparams in database.')
-		ship_ids = self.wowsdb.get_ship_ids()
-		pbar = tqdm(total=len(ship_ids))
-		for ship_id in ship_ids:
-			param = self.wowsapi.get_ship_profile(ship_id[0])
-			self.wowsdb.update_shipparam(param)
-			pbar.update()
-		pbar.close()
-		self.logger.debug('Ship parameters updated.')
+def _create_name(name):
+	d = ''
+	r = name[1] # region
+	if r == 'A':
+		d += '米'
+	elif r == 'B':
+		d += '英'
+	elif r == 'F':
+		d+= '仏'
+	elif r == 'G':
+		d += '独'
+	elif r == 'I':
+		d += '伊'
+	elif r == 'J':
+		d += '日'
+	elif r == 'R':
+		d += '露'
+	elif r == 'U':
+		d += 'イギリス連邦'
+	elif r == 'V':
+		d += 'パンアメリカ'
+	elif r == 'W':
+		d += 'パンヨーロッパ'
+	elif r == 'Z':
+		d += 'パンアジア'
+	elif r == 'X':
+		d += 'イベント'
 
-	def update_modules(self):
-		"""
-		Update ship modules table in database.
-		"""
-		self.logger.debug('Updating modules in database.')
-		warships = self.wowsdb.get_warships()
-		pbar = tqdm(total=len(warships))
-		module_list = []
-		for warship in warships:
-			pbar.update()
-			module_ids = warship.get_module_id_list()
-			for module_id in module_ids:
-				temp = self.wowsdb.get_module(module_id)
-				if temp:
-					continue
-				module = self.wowsapi.get_module(module_id)
-				self.wowsdb.update_module(module)
-		pbar.close()
-		self.logger.debug('Modules updated.')
+	t = name[2:4] # type
+	if t == 'SA':
+		d+= '空'
+	elif t == 'SB':
+		d += '戦'	
+	elif t == 'SC':
+		d += '巡'	
+	elif t == 'SD':
+		d += '駆'	
+	elif t == 'SS':
+		d += '潜'
+	return d + name[8:].strip()

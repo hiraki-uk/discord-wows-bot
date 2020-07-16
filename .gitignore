@@ -126,3 +126,4 @@ dmypy.json
 .envcopy
 .vscode/*
 temp.py
+wows/ships.json

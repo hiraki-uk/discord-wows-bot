@@ -1,122 +1,140 @@
-import ast
+import json
+from wows.module import get_torp
 
-from wows.module import ShipModule
 
+class Artillery:pass
+class Engine:pass
+class Firecontrol:pass
+class Hull:pass
+class Torp:pass
 
+ 
 class Warship:
-	def __init__(self, data):
-		self.price_gold = data['price_gold']
-		self.ship_id_str = data['ship_id_str']
-		self.has_demo_profile = data['has_demo_profile']
-		self.images = data['images']
-		self.modules = data['modules']
-		self.modules_tree = data['modules_tree']
-		self.nation = data['nation']
-		self.is_premium = data['is_premium']
-		self.ship_id = data['ship_id']
-		self.price_credit = data['price_credit']
-		self.default_profile = data['default_profile']
-		self.upgrades = data['upgrades']
-		self.tier = data['tier']
-		self.next_ships = data['next_ships']
-		self.mod_slots = data['mod_slots']
-		try:
-			self.shiptype = data['shiptype']
-		except KeyError:
-			self.shiptype = data['type']
-		self.is_special = data['is_special']
-		self.name = data['name']
-
-		# override above data
-		self.has_demo_profile = 1 if self.has_demo_profile == 'True' else 0
-		self.images = str(self.images)
-		self.modules = str(self.modules)
-		self.modules_tree = str(self.modules_tree)
-		self.is_premium = 1 if self.is_premium == 'True' else 0
-		self.default_profile = str(self.default_profile)
-		self.upgrades = str(self.upgrades)
-		self.next_ships = str(self.next_ships)
-		self.is_special = 1 if self.is_special == 'True' else 0
-
-	def __eq__(self, obj):
-		return isinstance(obj, Warship) and self.to_tuple() == obj.to_tuple()
-
-	def __ne__(self, obj):
-		return not self == obj
-
-	def to_tuple(self):
-		warship_tuple = (self.price_gold, self.ship_id_str, self.has_demo_profile,
-			self.images, self.modules, self.modules_tree, self.nation, self.is_premium,
-			self.ship_id, self.price_credit, self.default_profile, self.upgrades,
-			self.tier, self.next_ships, self.mod_slots, self.shiptype, self.is_special, self.name)
-		return warship_tuple
-	
-	def get_module_id_list(self):
-		if not self.modules:
-			return
-		module_dict = ast.literal_eval(self.modules)
-		module_list = []
-		for temp in module_dict.values():
-			module_list.extend(temp)
-		return module_list
-
-	def to_dict(self):
-		warship_dict = {
-			'price_gold': self.price_gold,
-			'ship_id_str': self.ship_id_str,
-			'has_demo_profile': self.has_demo_profile,
-			'images': self.images,
-			'modules': self.modules,
-			'modules_tree': self.modules_tree,
-			'nation': self.nation,
-			'is_premium': self.is_premium,
-			'ship_id': self.ship_id,
-			'price_credit': self.price_credit,
-			'default_profile': self.default_profile,
-			'upgrades': self.upgrades,
-			'tier': self.tier,
-			'next_ships': self.next_ships,
-			'mod_slots': self.mod_slots,
-			'shiptype': self.shiptype,
-			'is_special': self.is_special,
-			'name': self.name
-		}
-		return warship_dict
-
-	@staticmethod
-	def warship_from_tuple(data:tuple):
-		"""
-		Create warship instance from tuple.
-		"""
-		if data is None:
-			return None
-		warship_dict = {
-			'price_gold': data[0],
-			'ship_id_str': data[1],
-			'has_demo_profile': data[2],
-			'images': data[3],
-			'modules': data[4],
-			'modules_tree': data[5],
-			'nation': data[6],
-			'is_premium': data[7],
-			'ship_id': data[8],
-			'price_credit': data[9],
-			'default_profile': data[10],
-			'upgrades': data[11],
-			'tier': data[12],
-			'next_ships': data[13],
-			'mod_slots': data[14],
-			'shiptype': data[15],
-			'is_special': data[16],
-			'name': data[17]
-		}
-		warship = Warship(warship_dict)
-		return warship
+	def __init__(self, params:dict):
+		# description extracted outside each module
+		self.name = params['name']
+		self.index = params['index']
+		self.shipid = params['id']
+		self.tier = params['level']
+		self.typeinfo = params['typeinfo']
 		
-	@staticmethod
-	def warship_from_dict(data:dict):
-		"""
-		Create Warship instance from dict.
-		"""
-		warship = Warship(data)
-		return warship
+		a = []
+		e = []
+		fc = []
+		h = []
+		t = []
+		keys = params.keys()
+		for key in keys:
+			kv = {key:params[key]}
+			if 'Artillery' in key:
+				a.append(kv)
+			elif 'Engine' in key:
+				e.append(kv)
+			elif 'FireControl' in key:
+				fc.append(kv)
+			elif 'Hull' in key:
+				h.append(kv)
+			elif 'Torpedoes' in key:
+				t.append(kv)
+		a = sorted(a, key=lambda x:x.keys())	
+		e = sorted(e, key=lambda x:x.keys())
+		fc = sorted(fc, key=lambda x:x.keys())
+		h = sorted(h, key=lambda x:x.keys())
+		t = sorted(t, key=lambda x:x.keys())
+		# extracting description from each module
+		self.artilleries = []
+		self.engines = []
+		self.firecontrols = []
+		self.hulls = []
+		self.torpedoes = []
+		for artillery in a:
+			temp = create_artillery_description(artillery)
+			self.artilleries.append(temp)
+
+		for engine in e:
+			temp = create_engine_description(engine)
+			self.engines.append(temp)
+
+		for firecontrol in fc:
+			temp = create_fc_description(firecontrol)
+			self.firecontrols.append(temp)
+
+		for hull in h:
+			temp = create_hull_description(hull)
+			self.hulls.append(temp)
+		for torp in t:
+			temp = create_torp_description(torp)
+			self.torpedoes.append(temp)
+
+def create_artillery_description(a:Artillery):
+	a = list(a.values())[0]
+	# find main guns
+	guns = []
+	for key, value in a.items():
+		try:
+			if value['typeinfo']['type'] == 'Gun':
+				guns.append({
+				'barrelDiameter': value['barrelDiameter'],
+				'numBarrels': value['numBarrels'],
+				'rotationSpeed':value['rotationSpeed'][1],
+				'shotDelay': value['shotDelay'],
+				})
+		except Exception as e:
+			pass
+	artillery = {
+		'maxDist': a['maxDist'],
+		'sigma': a['sigmaCount'],
+		'minDistH': a['minDistH'],
+		'minDistV': a['minDistV'],
+		'normalDistribution': a['normalDistribution'],
+		'guns': guns
+	}
+	return artillery
+
+def create_engine_description(e:Engine):
+	pass
+
+def create_fc_description(fc:Firecontrol):
+	fc = list(fc.values())[0]
+	return fc['maxDistCoef']
+
+def create_hull_description(h:Hull):
+	h = list(h.values())[0]
+	hull = {
+		'health': h['health'],
+		'max_speed': h['maxSpeed'],
+		'size': h['size'][0],
+		'engine_power': h['enginePower'],
+		'turning_radius': h['turningRadius'],
+		'visibility': h['visibilityFactor'],
+		'visibility_plane': h['visibilityFactorByPlane'],
+	}
+	return hull
+
+def create_torp_description(t:Torp):
+	t = list(t.values())[0]
+	guns = []
+	for key, value in t.items():
+		try:
+			if value['typeinfo']['type'] == 'Gun':
+				ammolist = value['ammoList']
+				torp_list = []
+				for ammo in ammolist:
+					torp = get_torp(ammo)
+					torp_list.append({
+						'dmg': round(torp['alphaDamage']/(torp['damageCoeffMaxPing']+1)+torp['damage']),
+						'maxDist': round(torp['maxDist']*30/1000, 2),
+						'speed': torp['speed'],
+						'visibility': torp['visibilityFactor']
+					})
+				guns.append({
+				'numBarrels': value['numBarrels'],
+				'shotDelay': value['shotDelay'],
+				'torps': torp_list
+				})
+		except Exception as e:
+			pass
+	torp = {
+		'guns': guns
+	}
+	return torp

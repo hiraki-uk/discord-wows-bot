@@ -3,15 +3,26 @@ import unittest
 
 from dotenv import load_dotenv
 
-from wows.worldofwarships import WorldofWarships
-from wows.wowsapi import WowsApi
-from wows.wowsdb import Wows_database
+from wows.warship import Warship
+from wows.worldofwarships import create_warship, search_ship
+
 
 env_path = '.env'
 load_dotenv(dotenv_path=env_path)
 
 key = os.getenv('WOWS_APPLICATION_ID')
 db_path = 'wows.db'
+
+class TestWows(unittest.TestCase):
+	def test_search_warship(self):
+		w = create_warship('PJSD208_Kagero')
+		self.assertTrue(isinstance(w, Warship))
+
+	def test_create_warship(self):
+		w = search_ship('Kagero')
+		self.assertTrue(isinstance(w[0], str))
+		w = search_ship('PJSD208_Kagero')
+		self.assertTrue(isinstance(w[0], Warship))
 
 
 # class TestWowsApi(unittest.TestCase):
