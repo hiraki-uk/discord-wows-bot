@@ -46,7 +46,7 @@ class WowsCog(commands.Cog):
 			return
 		else:
 			self.logger.info('Found multiple matches.')
-			mes = 'いっぱいヒットしちゃったよ～　検索するとき艦名の前の情報はいらないよ！\n' \
+			mes = 'いっぱいヒットしちゃったよ～　艦名の日本語のところは除いて教えてね\n' \
 				'```' + ', '.join(result) + '```'
 			await ctx.send(mes)
 

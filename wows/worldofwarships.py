@@ -115,4 +115,4 @@ def _create_name(name):
 		d += '駆'	
 	elif t == 'SS':
 		d += '潜'
-	return d + name[8:].strip()
+	return d + name[4:].strip()
