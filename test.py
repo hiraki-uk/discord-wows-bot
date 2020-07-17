@@ -5,7 +5,7 @@ import unittest
 from dotenv import load_dotenv
 
 from wows.warship import Warship
-from wows.worldofwarships import create_warship, search_ship
+from wows.worldofwarships import WorldOfWarships
 
 env_path = '.env'
 load_dotenv(dotenv_path=env_path)
@@ -13,16 +13,19 @@ load_dotenv(dotenv_path=env_path)
 key = os.getenv('WOWS_APPLICATION_ID')
 db_path = 'wows.db'
 
+
 class TestWows(unittest.TestCase):
 	def test_search_warship(self):
-		w = search_ship('shimakaze')
-		self.assertTrue(isinstance(w[0], str))
-		w = search_ship('012_Shimakaze_1943')
-		self.assertTrue(isinstance(w[0], Warship))
+		w = WorldOfWarships()
+		s = w.search_ship('shimakaze')
+		self.assertTrue(isinstance(s[0], str))
+		s = w.search_ship('012_Shimakaze_1943')
+		self.assertTrue(isinstance(s[0], Warship))
 
 	def test_create_warship(self):
-		w = create_warship('PJSD912_Shimakaze_1943')
-		self.assertTrue(isinstance(w, Warship))
+		w = WorldOfWarships()
+		s = w.create_warship('PJSD912_Shimakaze_1943')
+		self.assertTrue(isinstance(s, Warship))
 
 
 # class TestWowsApi(unittest.TestCase):

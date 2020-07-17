@@ -12,13 +12,14 @@ from discord.ext import commands, tasks
 
 from scripts.logger import Logger
 from wows.warship import Warship
-from wows.worldofwarships import search_ship
+from wows.worldofwarships import WorldOfWarships
 
 
 class WowsCog(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.logger = Logger(self.__class__.__name__)
+		self.wows = WorldOfWarships()
 
 	@commands.command()
 	async def param(self, ctx, *, name):
@@ -29,21 +30,16 @@ class WowsCog(commands.Cog):
 		if name is None:
 			await ctx.send('どのぽふねのデータがほしいの？\nうむらると？諦めろ')
 			return
-		result = search_ship(name)
-		# exact match
-		if isinstance(result[0], Warship):
-			self.logger.info('Found exact match for a warship.')
-			embed = self.embed_builder(result)
-			await ctx.send(embed=embed)
-		#another exact match
-		# elif len(result) == 1:
-		# 	self.logger.info('Found exact match for a warship.')
-		# 	embed = self.embed_builder(result[0])
-		# 	await ctx.send(embed=embed)
-		elif not result:
+		result = self.wows.search_ship(name)
+		if not result:
 			self.logger.debug('No result found.')
 			await ctx.send('誰よその女！')
 			return
+		# exact match
+		elif isinstance(result[0], Warship):
+			self.logger.info('Found exact match for a warship.')
+			embed = self.embed_builder(result)
+			await ctx.send(embed=embed)
 		else:
 			self.logger.info('Found multiple matches.')
 			mes = 'いっぱいヒットしちゃったよ～　艦名の日本語のところは除いて教えてね\n' \

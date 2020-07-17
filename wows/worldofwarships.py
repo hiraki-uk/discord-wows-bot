@@ -7,74 +7,38 @@ ships_path = 'wows/ships.json'
 ship_ids_path = 'wows/ship_ids.txt'
 
 
-def _ships_from_gameparams():
-	with open(gp_path, 'r') as f:
-		s = f.read()
-	s_jsn = json.loads(s)
-	ships_json = {}
+class WorldOfWarships:
+	def __init__(self):
+		with open(ships_path, 'r') as f:
+			s = f.read()
+		self.s_json = json.loads(s)
 
-	for param_key, param_value in s_jsn.items():
-		try:
-			if param_value['typeinfo']['type'] == 'Ship':
-				ships_json[param_key] = param_value
-				print(f'Found {param_key}.')
-		except:
-			print('Typeinfo key not found.')
+	def create_warship(self, name:str) -> Warship:
+		"""
+		Create Warship instance of a given name.
+		"""
+		warship = Warship(self.s_json[name])
+		return warship
 
-	with open(ships_path, 'w') as f:
-		f.write(json.dumps(ships_json, indent=4))
+	def search_ship(self, name:str):
+		"""
+		Search for Warship instance of a given name.
+		Returns list of names if multiple results found.
 
-def _ship_ids_froms_ships():
-	with open(ships_path, 'r') as f:
-		s = f.read()
-	s_json = json.loads(s)
-	ship_ids = [ship_id for ship_id in s_json.keys()]
-	with open(ship_ids_path, 'w') as f:
-		f.write('\n'.join(ship_ids))
-
-def _clean_data():
-	with open(ships_path, 'r') as f:
-		s = f.read()
-	s_json = json.loads(s)
-	for key, value in s_json.items():
-		l = ['AIParams', 'A_Directors', 'Cameras', 'DockCamera', 'ShipAbilities', 'UnderwaterCamera']
-		for i in range(len(l)):
-			try:
-				del value[l[i]]
-			except Exception as e:
-				pass
-	with open('clean_ships.json', 'w') as f:
-		f.write(json.dumps(s_json, indent=4))
-
-def create_warship(name:str) -> Warship:
-	"""
-	Create Warship instance of a given name.
-	"""
-	with open(ships_path, 'r') as f:
-		s = f.read()
-	s_json = json.loads(s)
-	warship = Warship(s_json[name])
-	return warship
-
-def search_ship(name:str):
-	"""
-	Search for Warship instance of a given name.
-	Returns list of names if multiple results found.
-
-	Returns
-	-------
-	result_list: list of warship and name
-	name_list: list of str
-	"""
-	with open(ship_ids_path, 'r') as f:
-		s = f.readlines()
-	ships = [line for line in s if name.lower() in line.lower()]
-	if ships == 0:
-		return
-	elif len(ships) == 1:
-		ship = ships[0].strip()
-		return [create_warship(ship), _create_name(ship)]
-	return list(map(lambda x:_create_name(x), ships)) 
+		Returns
+		-------
+		result_list: list of warship and name
+		name_list: list of str
+		"""
+		with open(ship_ids_path, 'r') as f:
+			s = f.readlines()
+		ships = [line for line in s if name.lower() in line.lower()]
+		if not ships:
+			return
+		elif len(ships) == 1:
+			ship = ships[0].strip()
+			return [self.create_warship(ship), _create_name(ship)]
+		return list(map(lambda x:_create_name(x), ships)) 
 	
 def _create_name(name):
 	d = ''
