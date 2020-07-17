@@ -23,19 +23,24 @@ class Warship:
 		fc = []
 		h = []
 		t = []
-		keys = params.keys()
-		for key in keys:
-			kv = {key:params[key]}
-			if 'Artillery' in key:
-				a.append(kv)
-			elif 'Engine' in key:
-				e.append(kv)
-			elif 'FireControl' in key:
-				fc.append(kv)
-			elif 'Hull' in key:
-				h.append(kv)
-			elif 'Torpedoes' in key:
-				t.append(kv)
+		for key, value in params.items():
+			try:
+				module = get_module_type(key, value)
+				if module is None:
+					continue
+				kv = {key:value}
+				if module == 'A':
+					a.append(kv)
+				elif module == 'E':
+					e.append(kv)
+				elif module == 'FC':
+					fc.append(kv)
+				elif module == 'H':
+					h.append(kv)
+				elif module == 'T':
+					t.append(kv)
+			except:
+				pass
 		a = sorted(a, key=lambda x:x.keys())	
 		e = sorted(e, key=lambda x:x.keys())
 		fc = sorted(fc, key=lambda x:x.keys())
@@ -138,3 +143,29 @@ def create_torp_description(t:Torp):
 		'guns': guns
 	}
 	return torp
+
+def get_module_type(key, value:dict):
+	if 'Artillery' in key:
+		return 'A'
+	elif 'Engine' in key:
+		return 'E'
+	elif 'FireControl' in key:
+		return 'FC'
+	elif 'Hull' in key:
+		return 'H'
+	elif 'Torpedoes' in key:
+		return 'T'
+	if not isinstance(value, dict):
+		return None
+	for k, v in value.items():
+		if not isinstance(v, dict):
+			continue
+		try:
+			if v['typeinfo']['species'] == 'Main':
+				return 'A'
+			elif v['typeinfo']['species'] == 'Torpedo':
+				return 'T'
+		except:
+			pass
+	return None
+			

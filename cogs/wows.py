@@ -95,7 +95,7 @@ class WowsCog(commands.Cog):
 						torp_info += f'{round(tp["maxDist"], 1)}km　{tp["speed"]}kts　被発見{tp["visibility"]}km　{tp["dmg"]}dmg\n'
 					break
 				numbarrels = sum(map(lambda x:x['numBarrels'], torp['guns']))
-				a(name='魚雷', value=f'{len(torp["guns"])}基{numbarrels}門　{torp_info}')
+				a(name='魚雷', value=f'{len(torp["guns"])}基{numbarrels}門　{torp_info}', inline=False)
 			
 		if warship.firecontrols:
 			a(name='射撃管制', value=',　'.join(list(map(
