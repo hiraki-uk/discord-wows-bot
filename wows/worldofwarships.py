@@ -5,7 +5,7 @@ from wows.warship import Warship
 gp_path = 'wows/gameparams.json'
 ships_path = 'wows/ships.json'
 ship_ids_path = 'wows/ship_ids.txt'
-
+ship_ids_api_path = 'wows/ship_ids_api.txt'
 
 class WorldOfWarships:
 	def __init__(self):
@@ -20,7 +20,35 @@ class WorldOfWarships:
 		warship = Warship(self.s_json[name])
 		return warship
 
-	def search_ship(self, name:str):
+	def search_ship_id(self, name:str):
+		"""
+		Search for ship_id in ship_ids_api.txt file.
+		Returns ship_id if only one found, list of names if multiple hit.
+
+		Returns
+		-------
+		ship_id : int
+			ship_id of given name
+		ship_names : list of str
+			list of ship_name
+		"""
+		with open(ship_ids_api_path, 'r') as f:
+			s = f.read()
+		s_jsn = json.loads(s)
+		ship_ids = {shipname:ship_id for shipname, ship_id in s_jsn.items() if name.lower() in shipname.lower()}
+		if not ship_ids:
+			print('None found.')
+			return
+		if len(ship_ids) == 1:
+			print('Exact match found.')
+			ship_id = ship_ids.values()[0]
+			return ship_id
+		else:
+			print('Multiple found.')
+			ship_names = [ship_name for ship_name in ship_ids.keys()]
+			return ship_names
+
+	def get_ship(self, ship_id:int):
 		"""
 		Search for Warship instance of a given name.
 		Returns list of names if multiple results found.
