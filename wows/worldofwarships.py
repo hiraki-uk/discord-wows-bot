@@ -5,7 +5,7 @@ from wows.warship import Warship
 gp_path = 'wows/gameparams.json'
 ships_path = 'wows/ships.json'
 ship_ids_path = 'wows/ship_ids.txt'
-ship_ids_api_path = 'wows/ship_ids_api.txt'
+ship_ids_str_api_path = 'wows/ship_ids_str_api.txt'
 
 class WorldOfWarships:
 	def __init__(self):
@@ -13,61 +13,54 @@ class WorldOfWarships:
 			s = f.read()
 		self.s_json = json.loads(s)
 
-	def create_warship(self, name:str) -> Warship:
+	def search_ship_id_str(self, name:str):
 		"""
-		Create Warship instance of a given name.
-		"""
-		warship = Warship(self.s_json[name])
-		return warship
-
-	def search_ship_id(self, name:str):
-		"""
-		Search for ship_id in ship_ids_api.txt file.
-		Returns ship_id if only one found, list of names if multiple hit.
+		Search for ship_id_str in ship_ids_str_api.txt file.
+		Returns ship_id_str if only one found, list of names if multiple hit.
 
 		Returns
 		-------
-		ship_id : int
-			ship_id of given name
+		ship_id_str : str
+			ship_id_str of given name
 		ship_names : list of str
 			list of ship_name
 		"""
-		with open(ship_ids_api_path, 'r') as f:
+		with open(ship_ids_str_api_path, 'r', encoding='utf-8') as f:
 			s = f.read()
 		s_jsn = json.loads(s)
-		ship_ids = {shipname:ship_id for shipname, ship_id in s_jsn.items() if name.lower() in shipname.lower()}
-		if not ship_ids:
+		ship_ids_str = {shipname:ship_id_str for shipname, ship_id_str in s_jsn.items() if name.lower() in shipname.lower() and '[' not in shipname}
+		if not ship_ids_str:
 			print('None found.')
 			return
-		if len(ship_ids) == 1:
+		if len(ship_ids_str) == 1:
 			print('Exact match found.')
-			ship_id = ship_ids.values()[0]
-			return ship_id
+			ship_id_str = list(ship_ids_str.values())[0] # change from dict_values to list for slicing
+			return ship_id_str
 		else:
 			print('Multiple found.')
-			ship_names = [ship_name for ship_name in ship_ids.keys()]
+			# remove rental ships
+			ship_names = [ship_name for ship_name in ship_ids_str.keys()]
 			return ship_names
 
-	def get_ship(self, ship_id:int):
+	def get_ship(self, ship_id_str:str):
 		"""
-		Search for Warship instance of a given name.
-		Returns list of names if multiple results found.
+		Search for Warship instance of a given ship_id_str.
 
 		Returns
 		-------
-		result_list: list of warship and name
-		name_list: list of str
+		ship : Warship
+			Warship instance of given ship_id_str.
 		"""
 		with open(ship_ids_path, 'r') as f:
 			s = f.readlines()
-		ships = [line for line in s if name.lower() in line.lower()]
+		ships = [line.strip() for line in s if ship_id_str.lower() in line.lower()]
 		if not ships:
 			return
 		elif len(ships) == 1:
-			ship = ships[0].strip()
-			return [self.create_warship(ship), _create_name(ship)]
-		return list(map(lambda x:_create_name(x), ships)) 
-	
+			ship = Warship(self.s_json[ships[0]])
+			return 	ship
+		return
+
 def _create_name(name):
 	d = ''
 	r = name[1] # region

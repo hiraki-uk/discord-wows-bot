@@ -81,7 +81,7 @@ def create_artillery_description(a:Artillery):
 				guns.append({
 				'barrelDiameter': value['barrelDiameter'],
 				'numBarrels': value['numBarrels'],
-				'rotationSpeed':value['rotationSpeed'][1],
+				'rotationSpeed':round(180/value['rotationSpeed'][0]),
 				'shotDelay': value['shotDelay'],
 				})
 		except Exception as e:

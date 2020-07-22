@@ -22,21 +22,21 @@ class WowsCog(commands.Cog):
 		self.wows = WorldOfWarships()
 
 	@commands.command()
-	async def param(self, ctx, *, name):
+	async def param(self, ctx, *, name=None):
 		"""
 		そのぽふねのデータ教えてあげる！
 		"""
 		self.logger.info('Recieved param command.')
 		if name is None:
-			await ctx.send('どのぽふねのデータがほしいの？\nうむらると？諦めろ')
+			await ctx.send('どのぽふねのデータがほしいの？ うむらると？諦めろ')
 			return
-		result = self.wows.search_ship(name)
+		result = self.wows.search_ship_id_str(name)
 		if not result:
 			self.logger.debug('No result found.')
 			await ctx.send('誰よその女！')
 			return
 		# exact match
-		elif isinstance(result[0], Warship):
+		elif isinstance(result, str):
 			self.logger.info('Found exact match for a warship.')
 			embed = self.embed_builder(result)
 			await ctx.send(embed=embed)
@@ -46,14 +46,19 @@ class WowsCog(commands.Cog):
 				'```' + ', '.join(result) + '```'
 			await ctx.send(mes)
 
-	def embed_builder(self, result, show_id=True):
+	def embed_builder(self, result):
 		"""
 		Creates and returns embed.
 		set show_id to True for showing ship id.
-		"""
-		warship = result[0]
 
-		embed = Embed(colour=0x793DB6, title=result[1],
+		Params
+		------
+		result : str
+			ship_id_str of a warship.
+		"""
+		warship = self.wows.get_ship(result)
+
+		embed = Embed(colour=0x793DB6, title=warship.name,
 				description=f'T{warship.tier} {warship.typeinfo["nation"][:2].upper()} {warship.typeinfo["species"]},　shipID {warship.shipid}')
 		a = embed.add_field
 		if warship.hulls:
@@ -80,7 +85,7 @@ class WowsCog(commands.Cog):
 					numbarrels += gun['numBarrels']
 					rotation_speed = gun['rotationSpeed']
 					shotdelay = gun['shotDelay']
-				a(name='主砲', value=f'{round(barrelDiameter*1000)}mm砲　{len(artillery["guns"])}基　{round(numbarrels)}門　σ{artillery["sigma"]} ' \
+				a(name='主砲', value=f'{round(barrelDiameter*1000)}mm砲　{len(artillery["guns"])}基　{round(numbarrels)}門　装填{shotdelay}s　180度旋回{rotation_speed}s　σ{artillery["sigma"]} ' \
 					f'通常散布={artillery["normalDistribution"]}', inline=False)
 
 		if warship.torpedoes:
