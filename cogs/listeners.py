@@ -10,9 +10,9 @@ attachmentpath = 'attachments/'
 class Listener(commands.Cog):
 	__slots__ = ('bot', 'logger')
 	
-	def __init__(self, bot, logger=None):
+	def __init__(self, bot):
 		self.bot = bot
-		self.logger = Logger(__name__) if logger is None else logger
+		self.logger = Logger(__name__)
 
 	@commands.Cog.listener()
 	async def on_ready(self):
@@ -25,12 +25,6 @@ class Listener(commands.Cog):
 	@commands.Cog.listener()
 	async def on_message(self, mes):
 		self.logger.info(f'Message:{mes.content} author:{mes.author.name} id:{mes.author.id}')
-		# if mes.attachments:
-		# 	for attachment in mes.attachments:
-		# 		try:
-		# 			await attachment.save(attachmentpath + str(attachment.id) + attachment.filename, seek_begin=True, use_cached=True)
-		# 		except:
-		# 			continue
 
 	@commands.Cog.listener()
 	async def on_command_error(self, ctx, error):
