@@ -5,8 +5,29 @@ from discord.ext import commands, tasks
 
 
 class Grouping(commands.Cog):
+	"""
+	Grouping class for grouping people.
+	"""
 	def __init__(self):
 		pass
+
+	@commands.command()
+	async def newgrpup(self, ctx, group_str='2'):
+		try:
+			group = int(group_str)
+		except:
+			await ctx.send('これ数字じゃないよわかんないよ～')
+			return
+		
+		await ctx.send('ぶんぼ！挙手！終わったら〆てね！')
+		users = [user1, user2]
+		#  after 〆
+		if len(users) < group:
+			awit ctx.send(f'{group}グループも作れないよ～やり直して～')
+			return
+		await ctx.send('')
+
+		message = ''
 
 	@commands.command()
 	async def group(self, ctx, groups_str=None, players_str=None):
