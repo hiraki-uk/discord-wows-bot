@@ -9,17 +9,20 @@ import traceback
 import requests
 from discord import Embed
 from discord.ext import commands, tasks
-
 from scripts.logger import Logger
+
 from wows.warship import Warship
 from wows.worldofwarships import WorldOfWarships
+from wows.wowsapi import WowsApi
+
 
 
 class WowsCog(commands.Cog):
-	def __init__(self, bot):
+	def __init__(self, bot, wows_application_id):
 		self.bot = bot
 		self.logger = Logger(self.__class__.__name__)
 		self.wows = WorldOfWarships()
+		self.api = WowsApi(wows_application_id)
 
 	@commands.command()
 	async def param(self, ctx, *, name=None):

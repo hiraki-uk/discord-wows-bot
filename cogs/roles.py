@@ -4,6 +4,7 @@ from discord.ext import commands, tasks
 
 from scripts.logger import Logger
 from scripts.scripts import get_guild
+import json
 
 
 class Roles(commands.Cog):
@@ -77,3 +78,20 @@ class Roles(commands.Cog):
 			if role.mentionable:
 				await role.edit(mentionable=False)
 		await ctx.send(':thumbsup:')
+
+	@tasks.loop(minutes=3)
+	async def update_ranks(self):
+		with open('members.json', 'r') as f:
+			temp = f.read()
+			if not temp:
+				return
+		members = json.loads(temp)
+
+		for member in members:
+			discord_id = member['discord_id']
+			user = self.bot.get_member(discord_id)
+			roles = user.roles
+			temp = roles.sorted(key=lambda role:role.position)
+			for role in temp:
+				role_pos = role.id
+				pass

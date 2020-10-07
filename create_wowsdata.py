@@ -1,3 +1,8 @@
+"""
+Creates GameParams.json related files.
+gameparams.json file needed.
+"""
+
 import json
 import os
 import time
@@ -12,10 +17,15 @@ key = os.getenv('WOWS_APPLICATION_ID')
 
 gp_path = 'wows/gameparams.json'
 ships_path = 'wows/ships.json'
-ship_ids_path = 'wows/ship_ids.txt'
+torps_path = 'wows/torps.json'
+shipid_path = 'wows/ship_ids.txt'
+torpid_path = 'wows/torp_ids.txt'
 
 
 def _ships_from_gameparams():
+	"""
+	Create wows/ships.json from wows/gameparams.json file.
+	"""
 	with open(gp_path, 'r') as f:
 		s = f.read()
 	s_jsn = json.loads(s)
@@ -32,15 +42,55 @@ def _ships_from_gameparams():
 	with open(ships_path, 'w') as f:
 		f.write(json.dumps(ships_json, indent=4))
 
+
+def _torps_from_gameparams():
+	"""
+	Create wows/torps.json from wows/gameparams.json file.
+	"""
+	with open(gp_path, 'r') as f:
+		s = f.read()
+	s_jsn = json.loads(s)
+	torps_json = {}
+	for param_key, param_value in s_jsn.items():
+		try:
+			if param_value['typeinfo']['type'] == 'Projectile' and param_value['typeinfo']['species'] == 'Torpedo':
+				torps_json[param_key] = param_value
+				print(f'Found {param_key}.')
+		except:
+			print('Typeinfo key not found.')
+			
+	with open(torps_path, 'w') as f:
+		f.write(json.dumps(torps_json, indent=4))
+
+
 def _ship_ids_froms_ships():
+	"""
+	Create wows/ship_ids.txt from wows/ships.json file.
+	"""
 	with open(ships_path, 'r') as f:
 		s = f.read()
 	s_json = json.loads(s)
 	ship_ids = [ship_id for ship_id in s_json.keys()]
-	with open(ship_ids_path, 'w') as f:
+	with open(shipid_path, 'w') as f:
 		f.write('\n'.join(ship_ids))
 
+
+def _torp_ids_from_torps():
+	"""
+	Create wows/torp_ids.txt from wows/torps.json file.
+	"""
+	with open(torps_path, 'r') as f:
+		s = f.read()
+	s_json = json.loads(s)
+	torp_ids = [torp_id for torp_id in s_json.keys()]
+	with open(torpid_path, 'w') as f:
+		f.write('\n'.join(torp_ids))
+
+
 def _clean_data():
+	"""
+	Cleans unnecessary data from wows/ships.json file.
+	"""
 	with open(ships_path, 'r') as f:
 		s = f.read()
 	s_json = json.loads(s)
@@ -51,8 +101,9 @@ def _clean_data():
 				del value[l[i]]
 			except Exception as e:
 				pass
-	with open('clean_ships.json', 'w') as f:
+	with open(ships_path, 'w') as f:
 		f.write(json.dumps(s_json, indent=4))
+
 
 def _create_ship_ids_str_from_api():
 	"""
@@ -113,6 +164,22 @@ class Api:
 		
 
 if __name__ == '__main__':
-	# _create_ship_ids_from_api()
-	# Api().get_ship_ids(1)
+	print('Creating ships.json from gameparams.json.')
+	_ships_from_gameparams()
+	print('Done.\n' \
+		'Creatomg torps.json from gameparams.json.'
+	)
+	_torps_from_gameparams()
+	print('Done.\n' \
+		'Creating ship_ids.txt from gameparams.json.')
+	_ship_ids_froms_ships()
+	print('Done.\n' \
+		'Creating torp_ids.txt from gameparams.json.')
+	_torp_ids_from_torps()
+	print('Done.\n' \
+		'Cleaning data in ships.json.')
+	_clean_data()
+	print('Done.\n'
+		'Creating ship_ids_str_api.txt from Api.')
 	_create_ship_ids_str_from_api()
+	print('Done.')

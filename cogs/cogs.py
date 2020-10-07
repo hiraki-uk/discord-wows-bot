@@ -4,8 +4,8 @@ import random
 import discord
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
-
 from scripts.logger import Logger
+
 
 load_dotenv(dotenv_path='.env')
 
@@ -40,14 +40,14 @@ class Cogs(commands.Cog):
 		async for message in ctx.channel.history(limit=6):
 			await message.delete()
 
-	# server status
-	@commands.command()
-	async def vmstat(self, ctx):
-		""" みつばサーバーの負荷状況を教えるよ！ """
-		stats = exec('vmstat')
-		await ctx.send('``` \
-			stats \
-		````')
+	# # server status
+	# @commands.command()
+	# async def vmstat(self, ctx):
+	# 	""" みつばサーバーの負荷状況を教えるよ！ """
+	# 	stats = exec('vmstat')
+	# 	await ctx.send('``` \
+	# 		stats \
+	# 	````')
 		
 	# urls
 	@commands.command()
@@ -82,8 +82,3 @@ class Cogs(commands.Cog):
 		sol = [prefix[i] + ships[i] for i in range(indexes)]
 
 		await ctx.send('\n'.join(sol))
-
-
-
-		
-		

@@ -14,7 +14,6 @@ from dotenv import load_dotenv
 
 from cogs.cogs import Cogs
 from cogs.listeners import Listener
-from cogs.newroles import NewRoles
 from cogs.roles import Roles
 from cogs.shitposting import Shitposting
 from cogs.twitter_manager import Twitter_manager
@@ -35,6 +34,8 @@ def bot_setup():
 	key = os.getenv('DISCORD_BOT_KEY')
 	activity_name = os.getenv('ACTIVITY_NAME')
 	db_path = os.getenv('DB_PATH')
+	wows_application_id = os.getenv('WOWS_APPLICATION_ID')
+
 	# register activity, prefix, commands
 	if activity_name is None:
 		bot = commands.Bot(command_prefix=prefix)
@@ -45,11 +46,10 @@ def bot_setup():
 			Cogs(bot),
 			Roles(bot),
 			Listener(bot),
-			NewRoles(bot),
 			Shitposting(bot),
 			VoiceChannel(bot),
 			Weather(bot),
-			WowsCog(bot),
+			WowsCog(bot, wows_application_id),
 			Twitter_manager(bot),
 	)
 	return bot, key

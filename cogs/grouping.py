@@ -23,7 +23,7 @@ class Grouping(commands.Cog):
 		users = [user1, user2]
 		#  after 〆
 		if len(users) < group:
-			awit ctx.send(f'{group}グループも作れないよ～やり直して～')
+			await ctx.send(f'{group}グループも作れないよ～やり直して～')
 			return
 		await ctx.send('')
 

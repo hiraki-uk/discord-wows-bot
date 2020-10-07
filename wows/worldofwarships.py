@@ -1,11 +1,14 @@
 import json
 
+from wows.modules import get_torp
 from wows.warship import Warship
+
 
 gp_path = 'wows/gameparams.json'
 ships_path = 'wows/ships.json'
 ship_ids_path = 'wows/ship_ids.txt'
 ship_ids_str_api_path = 'wows/ship_ids_str_api.txt'
+
 
 class WorldOfWarships:
 	def __init__(self):
@@ -40,6 +43,12 @@ class WorldOfWarships:
 			print('Multiple found.')
 			# remove rental ships
 			ship_names = [ship_name for ship_name in ship_ids_str.keys()]
+			# search for exact match
+			temp = [ship for ship in ship_names if ship.lower() == name.lower()]
+			if len(temp) == 1:
+				print('Found exact match.')
+				ship_id_str = ship_id_str = temp
+				return ship_id_str
 			return ship_names
 
 	def get_ship(self, ship_id_str:str):
@@ -60,6 +69,8 @@ class WorldOfWarships:
 			ship = Warship(self.s_json[ships[0]])
 			return 	ship
 		return
+
+
 
 def _create_name(name):
 	d = ''

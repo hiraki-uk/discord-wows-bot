@@ -1,5 +1,6 @@
 import json
-from wows.module import get_torp
+
+from wows.modules import get_torp
 
 
 class Artillery:pass
@@ -8,7 +9,7 @@ class Firecontrol:pass
 class Hull:pass
 class Torp:pass
 
- 
+
 class Warship:
 	def __init__(self, params:dict):
 		# description extracted outside each module
