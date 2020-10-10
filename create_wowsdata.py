@@ -21,7 +21,7 @@ torps_path = 'wows/torps.json'
 shipid_path = 'wows/ship_ids.txt'
 torpid_path = 'wows/torp_ids.txt'
 ship_ids_str_api_path = 'wows/ship_ids_str_api.txt'
-paths = [ships_path, torps_path, shipid_path, torpid_path]
+paths = [ships_path, torps_path, shipid_path, torpid_path, ship_ids_str_api_path]
 
 def _ships_from_gameparams():
 	"""
