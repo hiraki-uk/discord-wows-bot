@@ -20,7 +20,7 @@ ships_path = 'wows/ships.json'
 torps_path = 'wows/torps.json'
 shipid_path = 'wows/ship_ids.txt'
 torpid_path = 'wows/torp_ids.txt'
-
+ship_ids_str_api_path = 'wows/ship_ids_str_api.txt'
 paths = [ships_path, torps_path, shipid_path, torpid_path]
 
 def _ships_from_gameparams():
@@ -119,7 +119,7 @@ def _create_ship_ids_str_from_api():
 		if result is None: return
 		ships.update(result)
 
-	with open('ship_ids_str_api.txt', 'w', encoding='utf-8') as f:
+	with open(ship_ids_str_api_path, 'w', encoding='utf-8') as f:
 		f.write(json.dumps(ships, indent=4).encode().decode('unicode-escape'))
 	print('Done.')
 
