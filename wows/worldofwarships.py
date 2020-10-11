@@ -44,11 +44,12 @@ class WorldOfWarships:
 			# remove rental ships
 			ship_names = [ship_name for ship_name in ship_ids_str.keys()]
 			# search for exact match
-			temp = [ship for ship in ship_names if ship.lower() == name.lower()]
-			if len(temp) == 1:
-				print('Found exact match.')
-				ship_id_str = ship_id_str = temp
-				return ship_id_str
+			for ship_name in ship_names:
+				if ship_name.lower() == name.lower():
+					# exact match
+					print('Found exact match.')
+					ship_id_str = ship_ids_str[ship_name]
+					return ship_id_str
 			return ship_names
 
 	def get_ship(self, ship_id_str:str):
