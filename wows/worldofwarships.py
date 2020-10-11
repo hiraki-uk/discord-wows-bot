@@ -52,7 +52,7 @@ class WorldOfWarships:
 					return ship_id_str
 			return ship_names
 
-	def get_ship(self, ship_id_str:str):
+	def get_ship(self, ship_id_str:str, v=False):
 		"""
 		Search for Warship instance of a given ship_id_str.
 
@@ -67,10 +67,12 @@ class WorldOfWarships:
 		if not ships:
 			return
 		elif len(ships) == 1:
-			ship = Warship(self.s_json[ships[0]])
-			return 	ship
+			if not v:
+				ship = Warship(self.s_json[ships[0]])
+				return 	ship
+			else:
+				return self.s_json[ships[0]]
 		return
-
 
 
 def _create_name(name):

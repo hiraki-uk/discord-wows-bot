@@ -1,20 +1,21 @@
 import ast
 import asyncio
 import datetime
+import io
 import json
 import math
+import os
 import sqlite3
 import traceback
 
 import requests
-from discord import Embed
+from discord import Embed, File
 from discord.ext import commands, tasks
 from scripts.logger import Logger
 
 from wows.warship import Warship
 from wows.worldofwarships import WorldOfWarships
 from wows.wowsapi import WowsApi
-
 
 
 class WowsCog(commands.Cog):
@@ -24,8 +25,9 @@ class WowsCog(commands.Cog):
 		self.wows = WorldOfWarships()
 		self.api = WowsApi(wows_application_id)
 
-	@commands.command()
-	async def param(self, ctx, *, name=None):
+
+	@commands.command(aliases=['param'])
+	async def pm(self, ctx, *, name=None):
 		"""
 		そのぽふねのデータ教えてあげる！
 		"""
@@ -41,7 +43,7 @@ class WowsCog(commands.Cog):
 		# exact match
 		elif isinstance(result, str):
 			self.logger.info('Found exact match for a warship.')
-			embed = self.embed_builder(result)
+			embed = self.embed_builder(result, False)
 			await ctx.send(embed=embed)
 		else:
 			self.logger.info('Found multiple matches.')
@@ -49,7 +51,35 @@ class WowsCog(commands.Cog):
 				'```' + ', '.join(result) + '```'
 			await ctx.send(mes)
 
-	def embed_builder(self, result):
+
+	@commands.command()
+	async def pmv(self, ctx, *, name=None):
+		"""
+		そのぽふねのデータ教えてあげる！
+		"""
+		self.logger.info('Recieved param command.')
+		if name is None:
+			await ctx.send('どのぽふねのデータがほしいの？ うむらると？諦めろ')
+			return
+		result = self.wows.search_ship_id_str(name)
+		if not result:
+			self.logger.debug('No result found.')
+			await ctx.send('誰よその女！')
+			return
+		# exact match
+		elif isinstance(result, str):
+			self.logger.info('Found exact match for a warship.')
+			embed = self.embed_builder(result, True)
+			temp = File(io.StringIO(json.dumps(embed, indent=4)), filename='params.json')
+			await ctx.send(file=temp)
+		else:
+			self.logger.info('Found multiple matches.')
+			mes = 'いっぱいヒットしちゃったよ～　艦名の日本語のところは除いて教えてね\n' \
+				'```' + ', '.join(result) + '```'
+			await ctx.send(mes)
+
+
+	def embed_builder(self, result, v:bool):
 		"""
 		Creates and returns embed.
 		set show_id to True for showing ship id.
@@ -59,8 +89,9 @@ class WowsCog(commands.Cog):
 		result : str
 			ship_id_str of a warship.
 		"""
-		warship = self.wows.get_ship(result)
-
+		warship = self.wows.get_ship(result, v)
+		if v:
+			return warship
 		embed = Embed(colour=0x793DB6, title=warship.name,
 				description=f'T{warship.tier} {warship.typeinfo["nation"][:2].upper()} {warship.typeinfo["species"]},　shipID {warship.shipid}')
 		a = embed.add_field
