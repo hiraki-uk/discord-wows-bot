@@ -34,7 +34,7 @@ def bot_setup():
 	key = os.getenv('DISCORD_BOT_KEY')
 	activity_name = os.getenv('ACTIVITY_NAME')
 	db_path = os.getenv('DB_PATH')
-	wows_application_id = os.getenv('WOWS_APPLICATION_ID')
+	wows_application_id = os.getenv('WOWS_AaaaaaaaaaaaaaaaaaaaaaaaaaPPLICATION_ID')
 
 	# register activity, prefix, commands
 	if activity_name is None:
