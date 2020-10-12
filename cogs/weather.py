@@ -96,11 +96,10 @@ class Weather(commands.Cog):
 		""" 天気を教えるよ！ """
 		self.logger.debug('Creating weather embed.')
 		scraper = Scrape_weather()
-		# e, c = scraper.embed_builder()
-		# self.logger.debug('Created weather embed.')
-		# await ctx.send('```' + c + '```', embed=e)
-		# del scraper, e, c
-		message, c = scraper.message_builder()
+		e, c = scraper.embed_builder()
+		self.logger.debug('Created weather embed.')
+		await ctx.send('```' + c + '```', embed=e)
+		del scraper, e, c
 		await ctx.send('```' + c + '```\n\n' + message)
 
 	@tasks.loop(seconds=50)
@@ -114,11 +113,9 @@ class Weather(commands.Cog):
 			self.last_sent_date = now.date()
 			
 		scraper = Scrape_weather()
-		# e, c = scraper.embed_builder()
-		message, c = scraper.message_builder()
+		e, c = scraper.embed_builder()
 		for guild in self.bot.guilds:
 			for channel in guild.channels:
 				if channel.name == 'main':
-					# await channel.send('```' + c + '```', embed=e)
-					await channel.send('```' + c + '```\n\n' + message)
-		# del scraper, e, c
+					await channel.send('```' + c + '```', embed=e)
+		del scraper, e, c
