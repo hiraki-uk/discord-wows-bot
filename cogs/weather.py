@@ -100,7 +100,6 @@ class Weather(commands.Cog):
 		self.logger.debug('Created weather embed.')
 		await ctx.send('```' + c + '```', embed=e)
 		del scraper, e, c
-		await ctx.send('```' + c + '```\n\n' + message)
 
 	@tasks.loop(seconds=50)
 	async def weather_task(self):
