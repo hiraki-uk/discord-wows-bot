@@ -103,6 +103,7 @@ class Weather(commands.Cog):
 
 	@tasks.loop(seconds=50)
 	async def weather_task(self):
+		print('Starting weather task.')
 		now = datetime.datetime.now(tz=tz)
 		if not (now.hour == 6 and now.minute == 30):
 			return

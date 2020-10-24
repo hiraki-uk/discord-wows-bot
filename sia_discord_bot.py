@@ -11,6 +11,7 @@ from pathlib import Path
 from discord import Activity, ActivityType
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
+from wowspy.wowspy import Wows
 
 from cogs.cogs import Cogs
 from cogs.listeners import Listener
@@ -20,6 +21,7 @@ from cogs.twitter_manager import Twitter_manager
 from cogs.vc import VoiceChannel
 from cogs.weather import Weather
 from cogs.wows import WowsCog
+from cogs.wows_db import WowsDb
 from scripts.logger import Logger
 from scripts.scripts import add_cogs
 
@@ -34,7 +36,7 @@ def bot_setup():
 	key = os.getenv('DISCORD_BOT_KEY')
 	activity_name = os.getenv('ACTIVITY_NAME')
 	db_path = os.getenv('DB_PATH')
-	wows_application_id = os.getenv('WOWS_AaaaaaaaaaaaaaaaaaaaaaaaaaPPLICATION_ID')
+	wows_application_id = os.getenv('WOWS_APPLICATION_ID')
 
 	# register activity, prefix, commands
 	if activity_name is None:
@@ -50,6 +52,7 @@ def bot_setup():
 			VoiceChannel(bot),
 			Weather(bot),
 			WowsCog(bot, wows_application_id),
+			WowsDb(bot),
 			Twitter_manager(bot),
 	)
 	return bot, key
