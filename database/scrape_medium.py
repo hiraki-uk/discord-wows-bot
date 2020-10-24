@@ -1,11 +1,16 @@
 import json
 import logging
+import os
 
 from bs4 import BeautifulSoup, Tag
+from dotenv import load_dotenv
+from scripts.exceptions import ScrapingException
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 
-from scripts.exceptions import ScrapingException
+load_dotenv(dotenv_path='.env')
+exe_path = os.getenv('EXECUTABLE_PATH')
+
 
 
 class Medium:
@@ -27,7 +32,10 @@ class Medium:
 		options = Options()
 		options.headless = True
 		options.add_experimental_option('excludeSwitches', ['enable-logging'])	
-		driver = Chrome(executable_path="database/chromedriver.exe", options=options)
+		if exe_path:
+			driver = Chrome(executable_path="database/chromedriver.exe", options=options)
+		else:
+			driver = Chrome(options=options)
 		driver.get('https://medium.com/@devblogwows')
 		source = driver.page_source.encode('utf-8')
 		driver.quit()
