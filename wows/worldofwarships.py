@@ -1,8 +1,6 @@
 import json
 
-from wows.modules import get_torp
 from wows.warship import Warship
-
 
 gp_path = 'wows/gameparams.json'
 ships_path = 'wows/ships.json'
@@ -15,6 +13,7 @@ class WorldOfWarships:
 		with open(ships_path, 'r') as f:
 			s = f.read()
 		self.s_json = json.loads(s)
+
 
 	def search_ship_id_str(self, name:str):
 		"""
@@ -52,6 +51,7 @@ class WorldOfWarships:
 					return ship_id_str
 			return ship_names
 
+
 	def get_ship(self, ship_id_str:str, v=False):
 		"""
 		Search for Warship instance of a given ship_id_str.
@@ -73,45 +73,3 @@ class WorldOfWarships:
 			else:
 				return self.s_json[ships[0]]
 		return
-
-
-def _create_name(name):
-	d = ''
-	r = name[1] # region
-	if r == 'A':
-		d += '米'
-	elif r == 'B':
-		d += '英'
-	elif r == 'F':
-		d+= '仏'
-	elif r == 'G':
-		d += '独'
-	elif r == 'I':
-		d += '伊'
-	elif r == 'J':
-		d += '日'
-	elif r == 'R':
-		d += '露'
-	elif r == 'U':
-		d += 'イギリス連邦'
-	elif r == 'V':
-		d += 'パンアメリカ'
-	elif r == 'W':
-		d += 'パンヨーロッパ'
-	elif r == 'Z':
-		d += 'パンアジア'
-	elif r == 'X':
-		d += 'イベント'
-
-	t = name[2:4] # type
-	if t == 'SA':
-		d+= '空'
-	elif t == 'SB':
-		d += '戦'	
-	elif t == 'SC':
-		d += '巡'	
-	elif t == 'SD':
-		d += '駆'	
-	elif t == 'SS':
-		d += '潜'
-	return d + name[4:].strip()

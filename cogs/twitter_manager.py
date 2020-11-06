@@ -1,18 +1,15 @@
 """
 twitter_manager module.
 """
-
 import asyncio
 from os import getenv
 
-import discord
 import twitter
-from discord import Embed
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 
 try:
-	from scripts.logger import Logger
+	from utils.logger import Logger
 except:
 	pass
 
@@ -32,8 +29,9 @@ class Twitter_manager(commands.Cog):
 		self.bot = bot
 		statuses = self.wowsnews_jp.get_latest_statuses()
 		self.latest_id = statuses[0].id
-		self.logger = Logger(__name__)
+		self.logger = Logger(self.__class__.__name__)
 		self.check_task.start()
+
 
 	@tasks.loop(seconds=30)
 	async def check_task(self):
@@ -60,6 +58,7 @@ class Twitter_manager(commands.Cog):
 		self.latest_id = statuses[0].id
 		self.logger.debug('Finished sending.')
 
+
 	@check_task.before_loop
 	async def before_check(self):
 		await self.bot.wait_until_ready()
@@ -78,6 +77,7 @@ class WowsNewsJP:
 			access_token_key = getenv('TWITTER_TOKEN_KEY'),
 			access_token_secret = getenv('TWITTER_TOKEN_SECRET')
 		)
+
 
 	def get_latest_statuses(self, count=3):
 		"""

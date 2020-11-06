@@ -1,15 +1,12 @@
 import json
-import logging
 import os
 import re
-from json import load
-from sys import executable
 
 from bs4 import BeautifulSoup, ResultSet, Tag
 from dotenv import load_dotenv
-from scripts.exceptions import ScrapingException
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
+from utils.exceptions import ScrapingException
 
 load_dotenv(dotenv_path='.env')
 exe_path = os.getenv('EXECUTABLE_PATH')

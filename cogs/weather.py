@@ -4,9 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from discord import Embed
 from discord.ext import commands, tasks
-
-from scripts.logger import Logger
-
+from utils.logger import Logger
 
 tz = datetime.timezone(datetime.timedelta(hours=9))
 
@@ -84,9 +82,9 @@ class Scrape_weather:
 class Weather(commands.Cog):
 	__slots__ = ('bot', 'logger', 'last_sent_date')
 	
-	def __init__(self, bot, logger=None):
+	def __init__(self, bot):
 		self.bot = bot
-		self.logger = Logger(__name__) if logger is None else logger
+		self.logger = Logger(self.__class__.__name__)
 		self.last_sent_date = None
 		self.weather_task.start()
 
@@ -100,6 +98,7 @@ class Weather(commands.Cog):
 		self.logger.debug('Created weather embed.')
 		await ctx.send('```' + c + '```', embed=e)
 		del scraper, e, c
+
 
 	@tasks.loop(seconds=50)
 	async def weather_task(self):

@@ -1,15 +1,18 @@
-from wowspy import Wows, Region
-import requests
 import json
 
-class WowsApi(Wows):
+import requests
+from wowspy import Region, Wows
+
+
+class WowsApi:
 	def __init__(self, key):
 		self.key = key
-		super().__init__(key)
+		self.wowspy = Wows(key)
+
 
 	def get_in_game_name(self, account_id):
 		try:
-			response = self.player_personal_data(region=Region.AS, account_id=account_id, fields='nickname')
+			response = self.wowspy.player_personal_data(region=Region.AS, account_id=account_id, fields='nickname')
 			if not response:
 				return
 			elif response['status'] != 'ok':
@@ -18,13 +21,27 @@ class WowsApi(Wows):
 			return in_game_name
 		except:
 			return
-				
+
+
+	def get_battle_count(self, account_id):
+		try:
+			response = self.wowspy.player_personal_data(region=Region.AS, account_id=account_id, fields='statistics.pvp.battles')
+			if not response:
+				return -1
+			elif response['status'] != 'ok':
+				return -1
+			in_game_name = response['data'][str(account_id)]['statistics']['pvp']['battles']
+			return in_game_name
+		except:
+			return -1
+
+
 	def get_account_id(self, in_game_name):
 		"""
 		Get player id from in game name.
 		"""
 		try:
-			response = self.players(region=Region.AS, search=in_game_name, fields='account_id')
+			response = self.wowspy.players(region=Region.AS, search=in_game_name, fields='account_id')
 			if not response:
 				return
 			elif response['status'] != 'ok':
@@ -34,9 +51,10 @@ class WowsApi(Wows):
 		except:
 			return
 
+
 	def get_player_clan_tag(self, account_id):
 		try:
-			response = self.player_clan_data(region=Region.AS, account_id=account_id, extra='clan')
+			response = self.wowspy.player_clan_data(region=Region.AS, account_id=account_id, extra='clan')
 			if not response:
 				return
 			elif response['status'] != 'ok':
@@ -46,9 +64,10 @@ class WowsApi(Wows):
 		except:
 			return
 
+
 	def get_ranked_season_id(self):
 		try:
-			response = self.ranked_battles_seasons(region=Region.AS, fields='season_id')
+			response = self.wowspy.ranked_battles_seasons(region=Region.AS, fields='season_id')
 			if not response:
 				return
 			elif response['status'] != 'ok':
@@ -57,6 +76,7 @@ class WowsApi(Wows):
 			return max(seasons)			
 		except:
 			return
+
 
 	def get_rank(self, account_id, season_id):
 		try:
@@ -72,5 +92,3 @@ class WowsApi(Wows):
 			return rank
 		except:
 			return
-
-	

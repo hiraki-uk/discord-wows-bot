@@ -1,5 +1,3 @@
-
-
 class Data:
 	def __init__(self, result):
 		self.source = result[1]

@@ -1,5 +1,3 @@
-import json
-
 from wows.modules import get_torp
 
 
@@ -72,6 +70,7 @@ class Warship:
 			temp = create_torp_description(torp)
 			self.torpedoes.append(temp)
 
+
 def create_artillery_description(a:Artillery):
 	a = list(a.values())[0]
 	# find main guns
@@ -97,12 +96,15 @@ def create_artillery_description(a:Artillery):
 	}
 	return artillery
 
+
 def create_engine_description(e:Engine):
 	pass
+
 
 def create_fc_description(fc:Firecontrol):
 	fc = list(fc.values())[0]
 	return fc['maxDistCoef']
+
 
 def create_hull_description(h:Hull):
 	h = list(h.values())[0]
@@ -116,6 +118,7 @@ def create_hull_description(h:Hull):
 		'visibility_plane': h['visibilityFactorByPlane'],
 	}
 	return hull
+
 
 def create_torp_description(t:Torp):
 	t = list(t.values())[0]
@@ -144,6 +147,7 @@ def create_torp_description(t:Torp):
 		'guns': guns
 	}
 	return torp
+
 
 def get_module_type(key, value:dict):
 	if 'Artillery' in key:

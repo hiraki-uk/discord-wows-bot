@@ -1,7 +1,5 @@
-import discord
 from discord.ext import commands
-
-from scripts.logger import Logger
+from utils.logger import Logger
 
 attachmentpath = 'attachments/'
 
@@ -12,7 +10,8 @@ class Listener(commands.Cog):
 	
 	def __init__(self, bot):
 		self.bot = bot
-		self.logger = Logger(__name__)
+		self.logger = Logger(self.__class__.__name__)
+
 
 	@commands.Cog.listener()
 	async def on_ready(self):
@@ -22,17 +21,21 @@ class Listener(commands.Cog):
 		print('id:\t' + str(self.bot.user.id))
 		print('----------')
 
+
 	@commands.Cog.listener()
 	async def on_message(self, mes):
 		self.logger.info(f'Message:{mes.content} author:{mes.author.name} id:{mes.author.id}')
+
 
 	@commands.Cog.listener()
 	async def on_command_error(self, ctx, error):
 		pass
 
+
 	@commands.Cog.listener()
 	async def on_member_remove(self, member):
 		self.logger.info(f'Member removed:{member.name} id:{member.id}')
+
 
 	@commands.Cog.listener()
 	async def on_raw_message_delete(self, payload):

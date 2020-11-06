@@ -1,7 +1,6 @@
-import discord
 from database.wows_db import Wows_database
 from discord.ext import commands, tasks
-from scripts.logger import Logger
+from utils.logger import Logger
 
 
 class WowsDb(commands.Cog):
@@ -12,10 +11,10 @@ class WowsDb(commands.Cog):
 		self.bot = bot
 		self.db = Wows_database('database/wows.db')
 		self.latest_id = self.db.get_latest_id()
-		self.logger = Logger(__name__)
+		self.logger = Logger(self.__class__.__name__)
 		self.db_task.start()
 
-	
+
 	@commands.command()
 	async def dbcheck(self, ctx, _id=None):
 		if not _id:
@@ -57,5 +56,3 @@ class WowsDb(commands.Cog):
 							mes = data.title + '\n' + data.description
 							await channel.send(mes)
 				self.latest_id += 1
-		
-		

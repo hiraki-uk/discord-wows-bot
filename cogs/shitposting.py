@@ -1,4 +1,3 @@
-import discord
 from discord.ext import commands
 
 from cogs.cogfunctions.honda import card_process as card_proc

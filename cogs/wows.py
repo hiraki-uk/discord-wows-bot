@@ -1,19 +1,10 @@
-import ast
-import asyncio
-import datetime
 import io
 import json
-import math
-import os
-import sqlite3
-import traceback
 
-import requests
 from discord import Embed, File
-from discord.ext import commands, tasks
-from scripts.logger import Logger
+from discord.ext import commands
+from utils.logger import Logger
 
-from wows.warship import Warship
 from wows.worldofwarships import WorldOfWarships
 from wows.wowsapi import WowsApi
 

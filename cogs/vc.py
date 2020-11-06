@@ -1,7 +1,5 @@
-import discord
 from discord.ext import commands
-
-from scripts.logger import Logger
+from utils.logger import Logger
 
 # import youtube_dl
 
@@ -9,9 +7,10 @@ from scripts.logger import Logger
 class VoiceChannel(commands.Cog):
 	__slots__ = ('bot', 'logger')
 	
-	def __init__(self, bot, logger=None):
+	def __init__(self, bot):
 		self.bot = bot
-		self.logger = Logger(__name__) if logger is None else logger
+		self.logger = Logger(self.__class__.__name__)
+
 		
 	# change voice channel's bit rate
 	@commands.command()

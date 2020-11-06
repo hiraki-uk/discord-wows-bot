@@ -1,10 +1,9 @@
+import json
+
 import discord
 import matplotlib
 from discord.ext import commands, tasks
-
-from scripts.logger import Logger
-from scripts.scripts import get_guild
-import json
+from utils.logger import Logger
 
 
 class Roles(commands.Cog):
@@ -12,13 +11,15 @@ class Roles(commands.Cog):
 
 	def __init__(self, bot):
 		self.bot = bot
-		self.logger = Logger(__name__)
+		self.logger = Logger(self.__class__.__name__)
+
 
 	@commands.group()
 	async def roles(self, ctx):
 		""" 役職をいじれるよ！ """
 		if ctx.invoked_subcommand is None:
 			await ctx.send('コマンドも教えてね！')
+
 
 	@roles.command()
 	async def create(self, ctx, name, color='red'):
@@ -32,6 +33,7 @@ class Roles(commands.Cog):
 		color = discord.Colour(int(str(color)[1:], 16))
 		await ctx.guild.create_role(name=name, colour=color)
 		await ctx.send(name + ', いっちょあがり！')
+
 
 	@roles.command()
 	async def listnotused(self, ctx):
@@ -49,6 +51,7 @@ class Roles(commands.Cog):
 			b = False
 
 		await ctx.send('はい、終わり！')
+
 
 	@roles.command()
 	async def deletenotused(self, ctx):
@@ -71,6 +74,7 @@ class Roles(commands.Cog):
 		self.logger.debug('Processed deletenotused.')
 		await ctx.send('はい、終わり！')
 
+
 	@roles.command()
 	async def mentionoff(self, ctx):
 		""" 全ての役職をメンション不可能にするよ！ """
@@ -78,6 +82,7 @@ class Roles(commands.Cog):
 			if role.mentionable:
 				await role.edit(mentionable=False)
 		await ctx.send(':thumbsup:')
+
 
 	@tasks.loop(minutes=3)
 	async def update_ranks(self):

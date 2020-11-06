@@ -1,4 +1,6 @@
-from logging import Formatter, handlers, StreamHandler, getLogger, DEBUG, INFO, CRITICAL
+from logging import (CRITICAL, DEBUG, INFO, Formatter, StreamHandler,
+                     getLogger, handlers)
+
 
 class Logger:
 	__slots__ = ('logger',)

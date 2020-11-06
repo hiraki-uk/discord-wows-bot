@@ -4,6 +4,8 @@ import unittest
 
 from dotenv import load_dotenv
 
+from utils.member import Member
+from utils.members_mamager import MembersManager
 from wows.warship import Warship
 from wows.worldofwarships import WorldOfWarships
 
@@ -14,18 +16,63 @@ key = os.getenv('WOWS_APPLICATION_ID')
 db_path = 'wows.db'
 
 
-class TestWows(unittest.TestCase):
-	def test_search_warship(self):
-		w = WorldOfWarships()
-		s = w.search_ship('shimakaze')
-		self.assertTrue(isinstance(s[0], str))
-		s = w.search_ship('012_Shimakaze_1943')
-		self.assertTrue(isinstance(s[0], Warship))
+class TestMember(unittest.TestCase):
+	def test_member(self):
+		m = Member(discord_id=100, account_id=200, battles=10)
+		self.assertEqual(m.to_dict(), {'discord_id':100, 'account_id':200, 'battles':10})
+		self.assertEqual(m.discord_id(), 100)
+		self.assertEqual(m.account_id(), 200)
+		m.set_value('account_id', 201)
+		m.set_battles(11)
+		self.assertEqual(m.account_id(), 201)
+		self.assertEqual(m.battles(), 11)
 
-	def test_create_warship(self):
-		w = WorldOfWarships()
-		s = w.create_warship('PJSD912_Shimakaze_1943')
-		self.assertTrue(isinstance(s, Warship))
+
+class TestMemberManager(unittest.TestCase):
+	def setUp(self):
+		self.mm = MembersManager()
+		self.m1 = Member(discord_id=100, account_id=200)
+		self.m2 = Member(discord_id=101, account_id=201)
+		self.m_update = Member(discord_id=102, account_id=202)
+		self.tearDown()
+
+	def tearDown(self):
+		if self.mm.is_registered(100):
+			self.mm.deregister_member(100)
+		if self.mm.is_registered(101):
+			self.mm.deregister_member(101)
+		if self.mm.is_registered(102):
+			self.mm.deregister_member(102)			
+		if self.mm.is_registered(103):
+			self.mm.deregister_member(103)
+
+
+	def test_is_registered(self):
+		self.assertEqual(self.mm.is_registered(-1), False)
+	
+	def test_registered_members(self):
+		if self.mm.is_registered(399263984366256148):
+			self.assertIsNotNone(self.mm.registered_members())
+		else:
+			self.assertEqual(self.mm.registered_members(), [])
+
+	def test_register_member(self):
+		self.assertTrue(self.mm.register_member(self.m1))
+		self.assertTrue(self.mm.deregister_member(100))
+
+	def test_update_member(self):
+		self.mm.register_member(self.m_update)
+		self.m_update.set_value('account_id', self.m_update.account_id()+1)
+		self.assertTrue(self.mm.update_member(self.m_update))
+		
+	def test_update_members(self):
+		self.mm.register_member(self.m_update)
+		ms = self.mm.registered_members()
+		for m in ms:
+			if m.discord_id() == 103:
+				m.set_value('account_id', m.account_id()+1)
+		self.assertTrue(self.mm.update_members(ms))
+		
 
 
 # class TestWowsApi(unittest.TestCase):
