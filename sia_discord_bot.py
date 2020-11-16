@@ -5,6 +5,7 @@ English description is for developers, where Japanese ones will be desplayed to 
 import asyncio
 import os
 
+import discord
 from discord import Activity, ActivityType
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -34,12 +35,16 @@ def bot_setup():
 	db_path = os.getenv('DB_PATH')
 	wows_application_id = os.getenv('WOWS_APPLICATION_ID')
 
-	# register activity, prefix, commands
+	# register activity, prefix, commands, intents
+	intents = discord.Intents.default()
+	intents.presences = True
+	intents.members = True
+
 	if activity_name is None:
-		bot = commands.Bot(command_prefix=prefix)
+		bot = commands.Bot(command_prefix=prefix, intents=intents)
 	else:
 		activity = Activity(name=activity_name, type=ActivityType.playing)
-		bot = commands.Bot(command_prefix=prefix, activity=activity)
+		bot = commands.Bot(command_prefix=prefix, activity=activity, intents=intents)
 	add_cogs(bot,
 			Cogs(bot),
 			Roles(bot),

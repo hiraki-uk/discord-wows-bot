@@ -52,6 +52,23 @@ class Roles(commands.Cog):
 
 		await ctx.send('はい、終わり！')
 
+	@roles.command()
+	async def countnotused(self, ctx):
+		""" 使ってない役職の個数を教えるよ！ """
+		self.logger.debug('Processing countnotused.')
+		count = 0
+		b = False
+		for role in ctx.guild.roles:
+			if role.is_default():
+				continue
+			for member in ctx.guild.members:
+				if role in member.roles:
+					b = True
+			if not(b):
+				count += 1
+			b = False
+
+		await ctx.send(f'{count}個使われてないのあったよ～！')
 
 	@roles.command()
 	async def deletenotused(self, ctx):
