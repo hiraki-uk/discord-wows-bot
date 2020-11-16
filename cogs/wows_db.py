@@ -52,7 +52,7 @@ class WowsDb(commands.Cog):
 				# send news
 				for guild in self.bot.guilds:
 					for channel in guild.channels:
-						if channel.name == 'debug':
-							mes = data.title + '\n' + data.description
+						if channel.name == 'wows-news':
+							mes = data.title + '\n' + data.description + '\n\n' + data.url
 							await channel.send(mes)
 				self.latest_id += 1
