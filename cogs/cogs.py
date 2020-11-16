@@ -20,7 +20,7 @@ class Cogs(commands.Cog):
 		self.bot = bot
 		self.logger = Logger(self.__class__.__name__)
 		self.last_sent_date = None
-		self.hanshin_task.start()
+		# self.hanshin_task.start()
 
 	# version
 	@commands.command()
