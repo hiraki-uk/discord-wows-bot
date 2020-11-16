@@ -56,7 +56,7 @@ class MembersCog(commands.Cog):
 	async def wows_task(self):
 		""" Report and update members.json file. """
 		now = datetime.datetime.now(tz=tz)
-		if not (now.hour == 7 and now.minute == 0):
+		if not (now.weekday() == 0 and now.hour == 7 and now.minute == 0):
 			return
 		if self.last_sent_date == now.date():
 			return

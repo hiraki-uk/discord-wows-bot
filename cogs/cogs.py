@@ -86,19 +86,19 @@ class Cogs(commands.Cog):
 	# 	await ctx.send('\n'.join(sol))
 
 
-	@tasks.loop(seconds=50)
-	async def hanshin_task(self):
-		print('Starting hanshin task.')
-		now = datetime.datetime.now(tz=tz)
-		print(now)
-		if not (now.hour == 3 and now.minute == 30):
-			return
-		if self.last_sent_date == now.date():
-			return
-		else:
-			self.last_sent_date = now.date()
+	# @tasks.loop(seconds=50)
+	# async def hanshin_task(self):
+	# 	print('Starting hanshin task.')
+	# 	now = datetime.datetime.now(tz=tz)
+	# 	print(now)
+	# 	if not (now.hour == 3 and now.minute == 30):
+	# 		return
+	# 	if self.last_sent_date == now.date():
+	# 		return
+	# 	else:
+	# 		self.last_sent_date = now.date()
 			
-		for guild in self.bot.guilds:
-			for channel in guild.channels:
-				if channel.name == 'main':
-					await channel.send('334の時間です！！！！！')
+	# 	for guild in self.bot.guilds:
+	# 		for channel in guild.channels:
+	# 			if channel.name == 'main':
+	# 				await channel.send('334の時間です！！！！！')
