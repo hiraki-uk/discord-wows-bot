@@ -38,6 +38,30 @@ class Database:
 		return result
 
 
+	def fetchall(self, command:str, values=()):
+		"""
+		Get all results from database.
+		"""
+		self.logger.debug(f'Executing script on {self.db_path}.')
+		# connect and execute script
+		try:
+			conn = self._create_connection()
+			cursor = conn.cursor()
+			cursor.execute(command, values)
+			result = cursor.fetchall()
+		# sql errors
+		except Exception as e:
+			self.logger.critical(e)
+			self.logger.critical(traceback.format_exc())
+			result = None
+		# close connection
+		finally:
+			self._close_connection(conn)
+
+		self.logger.debug(f'Executing script finished on {self.db_path}.')
+		return result
+
+
 	def execute(self, command:str, values=()):
 		"""
 		Get one result from database.

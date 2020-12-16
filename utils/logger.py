@@ -1,21 +1,23 @@
 from logging import (CRITICAL, DEBUG, INFO, Formatter, StreamHandler,
-                     getLogger, handlers)
+                     getLogger, handlers, info)
 
 
 class Logger:
 	__slots__ = ('logger',)
 
-	def __init__(self, name=__name__):
-		level = DEBUG
+	def __init__(self, name=__name__, propagete=False):
+		level = INFO
 		self.logger = getLogger(name)
 		self.logger.setLevel(level)
+		self.logger.propagate = propagete
 		formatter = Formatter("[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s")
 
-		# stdout
-		handler = StreamHandler()
-		handler.setLevel(level)
-		handler.setFormatter(formatter)
-		self.logger.addHandler(handler)
+		if not self.logger.handlers:
+			# stdout
+			handler = StreamHandler()
+			handler.setLevel(level)
+			handler.setFormatter(formatter)
+			self.logger.addHandler(handler)
 
 		# file
 		handler = handlers.RotatingFileHandler(filename='artesia_bot.log',

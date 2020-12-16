@@ -40,12 +40,9 @@ try:
 
     s_jsn = json.dumps(s_pkl, cls=GPEncode, sort_keys=True, indent=4, separators=(',', ': '))
 
-    with open('gameparams.json', 'w', newline="\n") as f:
+    with open('../wows/gameparams.json', 'w', newline="\n") as f:
         f.write(s_jsn)
-
-    with open('all_IDs.txt', 'w', newline="\n") as f:
-        for key in json.loads(s_jsn):
-            f.write("%s \n" % (key))
+        
 
 except Exception as e:
     with open('error.txt', 'w') as f:

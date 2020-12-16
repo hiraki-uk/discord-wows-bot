@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 from utils.member import Member
 from utils.members_mamager import MembersManager
+from wows.gameparams_manager import GP_Manager
 from wows.warship import Warship
 from wows.worldofwarships import WorldOfWarships
 
@@ -14,6 +15,26 @@ load_dotenv(dotenv_path=env_path)
 
 key = os.getenv('WOWS_APPLICATION_ID')
 db_path = 'wows.db'
+
+
+class TestGPManager(unittest.TestCase):
+	def setUp(self):
+		self.gpm = GP_Manager()
+	
+	def test_search_ship(self):
+		data = self.gpm.search_ship('PJSB918')
+		self.assertIsNotNone(data)
+
+	def test_search_torp(self):
+		data = self.gpm.search_torp('PJPT038')
+		self.assertIsNotNone(data)
+
+	def test_search_ship_id_str(self):
+		data = self.gpm.search_ship_id_str('ya')
+		self.assertEqual(type(data), list)
+		
+		data = self.gpm.search_ship_id_str('yama')
+		self.assertEqual(type(data), str)
 
 
 class TestMember(unittest.TestCase):
@@ -73,7 +94,6 @@ class TestMemberManager(unittest.TestCase):
 				m.set_value('account_id', m.account_id()+1)
 		self.assertTrue(self.mm.update_members(ms))
 		
-
 
 # class TestWowsApi(unittest.TestCase):
 # 	def test_warships_count(self):

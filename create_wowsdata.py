@@ -4,112 +4,103 @@ gameparams.json file needed.
 """
 import json
 import os
+import sqlite3
 import time
 
 import requests
 from dotenv import load_dotenv
 from wowspy import Region, Wows
 
+from utils.database import Database
+
 env_path = '.env'
 load_dotenv(dotenv_path=env_path)
 key = os.getenv('WOWS_APPLICATION_ID')
 
-gp_path = 'wows/gameparams.json'
-ships_path = 'wows/ships.json'
-torps_path = 'wows/torps.json'
-shipid_path = 'wows/ship_ids.txt'
-torpid_path = 'wows/torp_ids.txt'
-ship_ids_str_api_path = 'wows/ship_ids_str_api.txt'
-paths = [ships_path, torps_path, shipid_path, torpid_path, ship_ids_str_api_path]
+gp_json_path = 'wows/gameparams.json'
+gp_db_path = 'wows/gameparams.db'
+ip_api_db_path = 'wows/id_api.db'
 
-
-def _ships_from_gameparams():
-	"""
-	Create wows/ships.json from wows/gameparams.json file.
-	"""
-	with open(gp_path, 'r') as f:
-		s = f.read()
-	s_jsn = json.loads(s)
-	ships_json = {}
-
-	for param_key, param_value in s_jsn.items():
-		try:
-			if param_value['typeinfo']['type'] == 'Ship':
-				ships_json[param_key] = param_value
-				print(f'Found {param_key}.')
-		except:
-			print('Typeinfo key not found.')
-
-	with open(ships_path, 'w') as f:
-		f.write(json.dumps(ships_json, indent=4))
-
-
-def _torps_from_gameparams():
-	"""
-	Create wows/torps.json from wows/gameparams.json file.
-	"""
-	with open(gp_path, 'r') as f:
-		s = f.read()
-	s_jsn = json.loads(s)
-	torps_json = {}
-	for param_key, param_value in s_jsn.items():
-		try:
-			if param_value['typeinfo']['type'] == 'Projectile' and param_value['typeinfo']['species'] == 'Torpedo':
-				torps_json[param_key] = param_value
-				print(f'Found {param_key}.')
-		except:
-			print('Typeinfo key not found.')
-			
-	with open(torps_path, 'w') as f:
-		f.write(json.dumps(torps_json, indent=4))
-
-
-def _ship_ids_froms_ships():
-	"""
-	Create wows/ship_ids.txt from wows/ships.json file.
-	"""
-	with open(ships_path, 'r') as f:
+def create_gameparams_db():
+	with open(gp_json_path, 'r') as f:
 		s = f.read()
 	s_json = json.loads(s)
-	ship_ids = [ship_id for ship_id in s_json.keys()]
-	with open(shipid_path, 'w') as f:
-		f.write('\n'.join(ship_ids))
-
-
-def _torp_ids_from_torps():
-	"""
-	Create wows/torp_ids.txt from wows/torps.json file.
-	"""
-	with open(torps_path, 'r') as f:
-		s = f.read()
-	s_json = json.loads(s)
-	torp_ids = [torp_id for torp_id in s_json.keys()]
-	with open(torpid_path, 'w') as f:
-		f.write('\n'.join(torp_ids))
-
-
-def _clean_data():
-	"""
-	Cleans unnecessary data from wows/ships.json file.
-	"""
-	with open(ships_path, 'r') as f:
-		s = f.read()
-	s_json = json.loads(s)
+	nation = []
+	species = []
+	types = []
+	others = []
 	for key, value in s_json.items():
-		l = ['AIParams', 'A_Directors', 'Cameras', 'DockCamera', 'ShipAbilities', 'UnderwaterCamera']
-		for i in range(len(l)):
-			try:
-				del value[l[i]]
-			except Exception as e:
-				pass
-	with open(ships_path, 'w') as f:
-		f.write(json.dumps(s_json, indent=4))
+		temp = value['typeinfo']
+		for key1, value1 in temp.items():
+			# if nation
+			if key1 == 'nation':
+				if not value1 in nation:
+					# if none use string none
+					if value1 is None:
+						if 'None' not in species:
+							species.append('None')               
+					nation.append(value1)
+			# species
+			elif key1 == 'species':
+				if value1 not in species:
+					# if none use string none
+					if value1 is None:
+						if 'None' not in species:
+							species.append('None')               
+					else:
+						species.append(value1)
+			# type
+			elif key1 == 'type':
+				if value1 not in types:
+					# if none use string none
+					if value1 is None:
+						if 'None' not in species:
+							species.append('None')               
+					types.append(value1) 
+	conn = sqlite3.connect(gp_db_path)
+	c = conn.cursor()
+	for specie in species:
+		# removing errors
+		specie = specie.replace(' ', '')
+		if specie == 'Drop':
+			specie = 'Drop_'
+		c.execute(f'drop table if exists {specie}')
+		command = f"""create table {specie} (
+		id INTEGER PRIMARY KEY,
+		index_str TEXT,
+		name TEXT,
+		data TEXT)"""
+		c.execute(command)
+	conn.commit()
+	conn.close()
+
+	conn = sqlite3.connect(gp_db_path)
+	c = conn.cursor()
+	for key, value in s_json.items():
+		specie = value['typeinfo']['species']
+		if specie is None:
+			specie = 'None'
+		specie = specie.replace(' ', '')
+		if specie == 'Drop':
+			specie = 'Drop_' 
+		
+		id_ = value['id']
+		index = value['index']
+		name = value['name']
+		data = str(value)
+		command = f'insert into {specie} (id, index_str, name, data) values (?, ?, ?, ?)'
+		c.execute(command, (id_, index, name, data))
+	conn.commit()
+	conn.close()
 
 
-def _create_ship_ids_str_from_api():
+def _create_id_api_db():
 	"""
-	Create ship_ids_str_api.txt file.
+	Create id_api.db file.
 	"""
+	db = Database(ip_api_db_path)
+	db.execute('DROP TABLE IF EXISTS ships')
+	
 	wows = Api()
 	result = wows.get_ship_id_str_pages()
 	if result is None: return
@@ -119,9 +110,12 @@ def _create_ship_ids_str_from_api():
 		if result is None: return
 		ships.update(result)
 
-	with open(ship_ids_str_api_path, 'w', encoding='utf-8') as f:
-		f.write(json.dumps(ships, indent=4).encode().decode('unicode-escape'))
-	print('Done.')
+	db.executescript("""CREATE TABLE ships(
+		id_int INTEGER PRIMARY KEY AUTOINCREMENT,
+		name TEXT,
+		id_str TEXT)""")
+	for name, id_str in ships.items():
+		db.execute('INSERT INTO ships (name, id_str) VALUES (?, ?)', (name, id_str))
 
 
 class Api:
@@ -165,28 +159,17 @@ class Api:
 		return data
 		
 
-if __name__ == '__main__':
-	print('Deleting previous version\'s gameparams files...')
-	for path in paths:
-		if os.path.exists(path):
-			os.remove(path)
+def init_db():
+	"""
+	Initialize databases.
+	"""
+	with open(gp_db_path, 'w'):
+		pass
+	with open(ip_api_db_path, 'w'):
+		pass
 
-	print('Creating ships.json from gameparams.json.')
-	_ships_from_gameparams()
-	print('Done.\n' \
-		'Creatomg torps.json from gameparams.json.'
-	)
-	_torps_from_gameparams()
-	print('Done.\n' \
-		'Creating ship_ids.txt from gameparams.json.')
-	_ship_ids_froms_ships()
-	print('Done.\n' \
-		'Creating torp_ids.txt from gameparams.json.')
-	_torp_ids_from_torps()
-	print('Done.\n' \
-		'Cleaning data in ships.json.')
-	_clean_data()
-	print('Done.\n'
-		'Creating ship_ids_str_api.txt from Api.')
-	_create_ship_ids_str_from_api()
-	print('Done.')
+
+if __name__ == '__main__':
+	init_db()
+	_create_id_api_db()
+	create_gameparams_db()

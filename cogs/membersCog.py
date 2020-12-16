@@ -96,7 +96,7 @@ class MembersCog(commands.Cog):
 			await ctx.send(message)
 		for guild in self.bot.guilds:
 			for channel in guild.channels:
-				if channel.name == 'bot-room':
+				if channel.name == 'debug':
 					await channel.send(message)
 
 

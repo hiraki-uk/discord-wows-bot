@@ -1,3 +1,5 @@
+from utils.database import Database
+
 from wows.modules import get_torp
 
 
@@ -9,7 +11,7 @@ class Torp:pass
 
 
 class Warship:
-	def __init__(self, params:dict):
+	def __init__(self, params:dict, cls):
 		# description extracted outside each module
 		self.name = params['name']
 		self.index = params['index']
@@ -67,7 +69,7 @@ class Warship:
 			temp = create_hull_description(hull)
 			self.hulls.append(temp)
 		for torp in t:
-			temp = create_torp_description(torp)
+			temp = create_torp_description(torp, cls)
 			self.torpedoes.append(temp)
 
 
@@ -120,7 +122,7 @@ def create_hull_description(h:Hull):
 	return hull
 
 
-def create_torp_description(t:Torp):
+def create_torp_description(t:Torp, cls):
 	t = list(t.values())[0]
 	guns = []
 	for key, value in t.items():
@@ -129,7 +131,7 @@ def create_torp_description(t:Torp):
 				ammolist = value['ammoList']
 				torp_list = []
 				for ammo in ammolist:
-					torp = get_torp(ammo)
+					torp = cls.search_torp(ammo)
 					torp_list.append({
 						'dmg': round(torp['alphaDamage']/(torp['damageCoeffMaxPing']+1)+torp['damage']),
 						'maxDist': round(torp['maxDist']*30/1000, 2),

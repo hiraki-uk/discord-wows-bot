@@ -4,7 +4,7 @@ from utils.exceptions import ScrapingException
 from utils.logger import Logger
 
 from database.data import Data
-from database.database import Database
+from utils.database import Database
 from database.scrape_facebook import get_facebook_articles
 from database.scrape_medium import get_medium_articles
 from database.scrape_wowshp import get_hp_articles

@@ -5,15 +5,15 @@ from discord import Embed, File
 from discord.ext import commands
 from utils.logger import Logger
 
-from wows.worldofwarships import WorldOfWarships
 from wows.wowsapi import WowsApi
+from wows.gameparams_manager import GP_Manager
 
 
 class WowsCog(commands.Cog):
 	def __init__(self, bot, wows_application_id):
 		self.bot = bot
 		self.logger = Logger(self.__class__.__name__)
-		self.wows = WorldOfWarships()
+		self.wows = GP_Manager()
 		self.api = WowsApi(wows_application_id)
 
 
@@ -80,7 +80,7 @@ class WowsCog(commands.Cog):
 		result : str
 			ship_id_str of a warship.
 		"""
-		warship = self.wows.get_ship(result, v)
+		warship = self.wows.search_ship(result, v)
 		if v:
 			return warship
 		embed = Embed(colour=0x793DB6, title=warship.name,
