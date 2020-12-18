@@ -1,7 +1,7 @@
 import json
 
 import discord
-import matplotlib
+# import matplotlib
 from discord.ext import commands, tasks
 from utils.logger import Logger
 
@@ -21,18 +21,18 @@ class Roles(commands.Cog):
 			await ctx.send('コマンドも教えてね！')
 
 
-	@roles.command()
-	async def create(self, ctx, name, color='red'):
-		""" 役職を作るよ！ roles create '役職の名前' '色（英語で教えてね！）' """
-		try:
-			color = matplotlib.colors.cnames.get(color)
-		except IndexError:
-			await ctx.send('名前と色も教えてね！')	
-			return
+	# @roles.command()
+	# async def create(self, ctx, name, color='red'):
+	# 	""" 役職を作るよ！ roles create '役職の名前' '色（英語で教えてね！）' """
+	# 	try:
+	# 		color = matplotlib.colors.cnames.get(color)
+	# 	except IndexError:
+	# 		await ctx.send('名前と色も教えてね！')	
+	# 		return
 
-		color = discord.Colour(int(str(color)[1:], 16))
-		await ctx.guild.create_role(name=name, colour=color)
-		await ctx.send(name + ', いっちょあがり！')
+	# 	color = discord.Colour(int(str(color)[1:], 16))
+	# 	await ctx.guild.create_role(name=name, colour=color)
+	# 	await ctx.send(name + ', いっちょあがり！')
 
 
 	@roles.command()
