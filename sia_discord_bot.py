@@ -19,7 +19,7 @@ from cogs.twitter_manager import Twitter_manager
 from cogs.vc import VoiceChannel
 from cogs.weather import Weather
 from cogs.wows import WowsCog
-from cogs.wows_db import WowsDb
+# from cogs.wows_db import WowsDb
 from utils.scripts import add_cogs
 
 
@@ -54,7 +54,7 @@ def bot_setup():
 			VoiceChannel(bot),
 			Weather(bot),
 			WowsCog(bot, wows_application_id),
-			WowsDb(bot),
+			# WowsDb(bot),
 			Twitter_manager(bot),
 	)
 	return bot, key
