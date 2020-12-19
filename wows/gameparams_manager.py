@@ -84,7 +84,7 @@ class GP_Manager:
 		Params
 		------
 		name : str
-			Index stirng of a torp. E.g. PJPT038
+			Index stirng of a torp. E.g. PJPT001_Sea_Torpedo_Type93
 		
 		Returns
 		-------

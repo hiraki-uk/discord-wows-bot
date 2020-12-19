@@ -20,6 +20,7 @@ class Database:
 		"""
 		self.logger.debug(f'Executing script on {self.db_path}.')
 		# connect and execute script
+		conn = None
 		try:
 			conn = self._create_connection()
 			cursor = conn.cursor()
@@ -44,6 +45,7 @@ class Database:
 		"""
 		self.logger.debug(f'Executing script on {self.db_path}.')
 		# connect and execute script
+		conn = None
 		try:
 			conn = self._create_connection()
 			cursor = conn.cursor()
@@ -68,6 +70,7 @@ class Database:
 		"""
 		self.logger.debug(f'Executing script on {self.db_path}.')
 		# connect and execute script
+		conn = None
 		try:
 			conn = self._create_connection()
 			cursor = conn.cursor()
@@ -90,6 +93,7 @@ class Database:
 		"""
 		self.logger.debug(f'Executing script on {self.db_path}.')
 		# connect and execute script
+		conn = None
 		try:
 			conn = self._create_connection()
 			cursor = conn.cursor()

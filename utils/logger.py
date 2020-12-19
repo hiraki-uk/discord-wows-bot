@@ -1,5 +1,5 @@
 from logging import (CRITICAL, DEBUG, INFO, Formatter, StreamHandler,
-                     getLogger, handlers, info)
+                     getLogger, handlers)
 
 
 class Logger:

@@ -1,8 +1,7 @@
 import datetime
 import os
-import random
 
-from discord.ext import commands, tasks
+from discord.ext import commands
 from dotenv import load_dotenv
 from utils.logger import Logger
 
@@ -20,7 +19,6 @@ class Cogs(commands.Cog):
 		self.bot = bot
 		self.logger = Logger(self.__class__.__name__)
 		self.last_sent_date = None
-		# self.hanshin_task.start()
 
 	# version
 	@commands.command()
@@ -42,15 +40,6 @@ class Cogs(commands.Cog):
 		async for message in ctx.channel.history(limit=6):
 			await message.delete()
 
-	# # server status
-	# @commands.command()
-	# async def vmstat(self, ctx):
-	# 	""" みつばサーバーの負荷状況を教えるよ！ """
-	# 	stats = exec('vmstat')
-	# 	await ctx.send('``` \
-	# 		stats \
-	# 	````')
-		
 	# urls
 	@commands.command()
 	async def jyantama(self, ctx):
@@ -70,7 +59,7 @@ class Cogs(commands.Cog):
 	@commands.command()
 	async def zeal(self, ctx):
 		""" ZEALホームページのURLだよ～ """
-		mes = ':thumbsup:\nhttps://zeal.live-on.net'
+		mes = ':thumbsup:\nhttps://zeal-corporation.sakura.ne.jp'
 		await ctx.send(mes)
 
 	# @commands.command()
@@ -84,21 +73,3 @@ class Cogs(commands.Cog):
 	# 	sol = [prefix[i] + ships[i] for i in range(indexes)]
 
 	# 	await ctx.send('\n'.join(sol))
-
-
-	# @tasks.loop(seconds=50)
-	# async def hanshin_task(self):
-	# 	print('Starting hanshin task.')
-	# 	now = datetime.datetime.now(tz=tz)
-	# 	print(now)
-	# 	if not (now.hour == 3 and now.minute == 30):
-	# 		return
-	# 	if self.last_sent_date == now.date():
-	# 		return
-	# 	else:
-	# 		self.last_sent_date = now.date()
-			
-	# 	for guild in self.bot.guilds:
-	# 		for channel in guild.channels:
-	# 			if channel.name == 'main':
-	# 				await channel.send('334の時間です！！！！！')

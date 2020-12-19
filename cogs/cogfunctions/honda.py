@@ -1,15 +1,16 @@
-import discord
 import random
 from pathlib import Path
+
+import discord
 
 path = Path('res')
 
 
 # win and lose corresponds to 'you win' or 'you lose'
 async def janken_process(ctx, choice):
-	m = '```＼ #本田とじゃんけん ／\n@pepsi_jpn をフォローして\n本田圭佑 とじゃんけん勝負✌\n'
-	m += '本田に勝てば、その場で\n#ペプシ \#ジャパンコーラ\nコンビニ無料引換えクーポンがもらえる！計16万名様！\n'
-	m += 'あなたは何を出す？\n【4/19まで #毎日挑戦  #毎日11時スタート！ 】\nhttp://bit.ly/2IcJudY\n\n```'
+	m = '```＼ #本田とじゃんけん ／\n@pepsi_jpn をフォローして\n本田圭佑 とじゃんけん勝負✌\n' \
+		'本田に勝てば、その場で\n#ペプシ \#ジャパンコーラ\nコンビニ無料引換えクーポンがもらえる！計16万名様！\n' \
+		'あなたは何を出す？\n【4/19まで #毎日挑戦  #毎日11時スタート！ 】\nhttp://bit.ly/2IcJudY\n\n```'
 	await ctx.send(m)
 
 	win_rock = discord.File(path /'win_rock.mp4', filename='result.mp4')
@@ -19,7 +20,7 @@ async def janken_process(ctx, choice):
 	lose_rock = discord.File(path / 'lose_rock.mp4', filename='result.mp4')
 	lose_paper = discord.File(path / 'lose_paper.mp4', filename='result.mp4')
 	lose_scissors = discord.File(path / 'lose_scissors.mp4', filename='result.mp4')
-
+	choices = None
 	if choice == 'rock': # if rock, you win when honda is scissors, you lose when honda is paper
 		choices = (win_scissors, lose_paper)
 	elif choice == 'paper': # if paper, you win when honda is rock, you lose when honda is scissors
@@ -32,10 +33,10 @@ async def janken_process(ctx, choice):
 
 async def card_process(ctx, choice):
 	# win and lose corresponds to 'you win' or 'you lose'
-	m = f'```＼ #本田とカードバトル ／#私は本田の{choice}を引く\n'
-	m += '@pepsi_jpn をフォローして 1日1回、本田圭佑 とカードバトル！\n'
-	m += '勝てば、 #ペプシ #ジャパンコーラ １ケース当たる！計1000名様！\n'
-	m += '【7/22まで #毎日挑戦 #毎日11時start 】 bit.ly/2XC2lDi```'
+	m = f'```＼ #本田とカードバトル ／#私は本田の{choice}を引く\n' \
+		'@pepsi_jpn をフォローして 1日1回、本田圭佑 とカードバトル！\n' \
+		'勝てば、 #ペプシ #ジャパンコーラ １ケース当たる！計1000名様！\n' \
+		'【7/22まで #毎日挑戦 #毎日11時start 】 bit.ly/2XC2lDi```'
 	await ctx.send(m)
 
 	temp = random.choice([

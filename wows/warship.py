@@ -1,8 +1,3 @@
-from utils.database import Database
-
-from wows.modules import get_torp
-
-
 class Artillery:pass
 class Engine:pass
 class Firecontrol:pass

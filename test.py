@@ -8,7 +8,6 @@ from utils.member import Member
 from utils.members_mamager import MembersManager
 from wows.gameparams_manager import GP_Manager
 from wows.warship import Warship
-from wows.worldofwarships import WorldOfWarships
 
 env_path = '.env'
 load_dotenv(dotenv_path=env_path)
@@ -26,7 +25,7 @@ class TestGPManager(unittest.TestCase):
 		self.assertIsNotNone(data)
 
 	def test_search_torp(self):
-		data = self.gpm.search_torp('PJPT038')
+		data = self.gpm.search_torp('PJPT001_Sea_Torpedo_Type93')
 		self.assertIsNotNone(data)
 
 	def test_search_ship_id_str(self):

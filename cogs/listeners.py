@@ -1,8 +1,6 @@
 from discord.ext import commands
 from utils.logger import Logger
 
-attachmentpath = 'attachments/'
-
 
 # A listener class for the bot's listener methods.
 class Listener(commands.Cog):
