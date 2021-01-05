@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 from cogs.cogs import Cogs
 from cogs.listeners import Listener
-from cogs.membersCog import MembersCog
+# from cogs.membersCog import MembersCog
 from cogs.roles import Roles
 from cogs.shitposting import Shitposting
 from cogs.twitter_manager import Twitter_manager
@@ -49,7 +49,7 @@ def bot_setup():
 			Cogs(bot),
 			Roles(bot),
 			Listener(bot),
-			MembersCog(bot, wows_application_id),
+			# MembersCog(bot, wows_application_id),
 			Shitposting(bot),
 			VoiceChannel(bot),
 			Weather(bot),
