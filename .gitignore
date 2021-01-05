@@ -126,4 +126,9 @@ dmypy.json
 .envcopy
 .vscode/*
 temp.py
-wows/ships.json
+res/gameparams.json
+members.json
+*.exe
+*.data
+*.db
+temp.*

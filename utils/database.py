@@ -1,3 +1,4 @@
+from logging import exception
 import sqlite3
 import traceback
 from sqlite3 import Connection
@@ -18,7 +19,6 @@ class Database:
 		"""
 		Get one result from database.
 		"""
-		self.logger.debug(f'Executing script on {self.db_path}.')
 		# connect and execute script
 		conn = None
 		try:
@@ -34,8 +34,6 @@ class Database:
 		# close connection
 		finally:
 			self._close_connection(conn)
-
-		self.logger.debug(f'Executing script finished on {self.db_path}.')
 		return result
 
 
@@ -43,7 +41,6 @@ class Database:
 		"""
 		Get all results from database.
 		"""
-		self.logger.debug(f'Executing script on {self.db_path}.')
 		# connect and execute script
 		conn = None
 		try:
@@ -59,8 +56,6 @@ class Database:
 		# close connection
 		finally:
 			self._close_connection(conn)
-
-		self.logger.debug(f'Executing script finished on {self.db_path}.')
 		return result
 
 
@@ -68,7 +63,6 @@ class Database:
 		"""
 		Get one result from database.
 		"""
-		self.logger.debug(f'Executing script on {self.db_path}.')
 		# connect and execute script
 		conn = None
 		try:
@@ -84,14 +78,11 @@ class Database:
 		finally:
 			self._close_connection(conn)
 
-		self.logger.debug(f'Executing script finish on {self.db_path}.')
-
 
 	def executescript(self, command:str):
 		"""
 		Execute script on database.
 		"""
-		self.logger.debug(f'Executing script on {self.db_path}.')
 		# connect and execute script
 		conn = None
 		try:
@@ -107,18 +98,54 @@ class Database:
 		finally:
 			self._close_connection(conn)
 
-		self.logger.debug(f'Executing script finished on {self.db_path}.')
+	
+	def insertmany(self, l:list):
+		"""
+		Inserts many data into database.
 
+		Params
+		------
+		l : list
+			l = [(command, val), (command, val), ...]
+		"""
+		conn = self._create_connection()
+		cursor = conn.cursor()
+		try:
+			for command, value in l:
+				cursor.execute(command, value)
+		except Exception as e:
+			self.logger.critical(e)
+			self.logger.critical(traceback.format_exc())
+		finally:
+			self._close_connection(conn)
+
+
+	def executemany(self, l:list):
+		"""
+		Executes many commands into database.
+
+		Params
+		------
+		l : list
+			l = [command, command, command, ...]
+		"""
+		conn = self._create_connection()
+		cursor = conn.cursor()
+		try:
+			for command in l:
+				cursor.execute(command)
+		except Exception as e:
+			self.logger.critical(e)
+			self.logger.critical(traceback.format_exc())
+		finally:
+			self._close_connection(conn)
+				
 
 	def _create_connection(self) -> Connection:
-		self.logger.debug('Connecting to database.')
 		conn = sqlite3.connect(self.db_path)
-		self.logger.debug('Connected to database.')
 		return conn
 
 
 	def _close_connection(self, conn):
-		self.logger.debug('Closing connection to database.')
 		conn.commit()
 		conn.close()
-		self.logger.debug('Closed connection to database.')

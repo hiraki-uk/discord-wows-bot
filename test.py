@@ -3,11 +3,13 @@ import os
 import unittest
 
 from dotenv import load_dotenv
+from PIL import Image
 
+from gameparams.gp_db import GameparamsDB
+from gameparams.images import create_image, process_image
+from gameparams.warship_db import WarshipDB
 from utils.member import Member
 from utils.members_mamager import MembersManager
-from wows.gameparams_manager import GP_Manager
-from wows.warship import Warship
 
 env_path = '.env'
 load_dotenv(dotenv_path=env_path)
@@ -16,13 +18,42 @@ key = os.getenv('WOWS_APPLICATION_ID')
 db_path = 'wows.db'
 
 
+class TestImages(unittest.TestCase):
+	def test_create_image(self):
+		warship = WarshipDB().get_warship('select * from warship where nickname like "%Yamato%"')[0]
+		base = Image.open('res/base.jpeg').copy()
+		create_image(base, warship)
+
+	def test_process_image(self):
+		warship = WarshipDB().get_warship('select * from warship where nickname like "%Yamato%"')[0]
+		base = Image.open('res/base.jpeg').copy()
+
+
+class TestWarshipDB(unittest.TestCase):
+	def setUp(self):
+		self.db = WarshipDB()
+
+	def test_get_warship(self):
+		yamato = self.db.get_warship('select * from warship where nickname like "%Yamato%"')
+		self.assertIsNotNone(yamato)
+
+
 class TestGPManager(unittest.TestCase):
 	def setUp(self):
-		self.gpm = GP_Manager()
+		self.gpm = GameparamsDB()
 	
 	def test_search_ship(self):
 		data = self.gpm.search_ship('PJSB918')
 		self.assertIsNotNone(data)
+
+	def test_ship_to_dict(self):
+		data = self.gpm.search_ship('PJSB918').to_dict()
+		self.assertIsInstance(data, dict)
+
+	def test_ship_to_json(self):
+		data = self.gpm.search_ship('PJSB918').to_dict()
+		temp = json.dumps(data)
+		self.assertIsNotNone(temp)
 
 	def test_search_torp(self):
 		data = self.gpm.search_torp('PJPT001_Sea_Torpedo_Type93')
@@ -34,6 +65,10 @@ class TestGPManager(unittest.TestCase):
 		
 		data = self.gpm.search_ship_id_str('yama')
 		self.assertEqual(type(data), str)
+
+	def test_get_all_mods(self):
+		data = self.gpm.get_all_mods()
+		self.assertNotEqual(data, [])
 
 
 class TestMember(unittest.TestCase):

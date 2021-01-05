@@ -40,7 +40,7 @@ try:
 
     s_jsn = json.dumps(s_pkl, cls=GPEncode, sort_keys=True, indent=4, separators=(',', ': '))
 
-    with open('../wows/gameparams.json', 'w', newline="\n") as f:
+    with open('../res/gameparams.json', 'w', newline="\n") as f:
         f.write(s_jsn)
         
 
