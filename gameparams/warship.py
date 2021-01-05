@@ -20,9 +20,10 @@ class Warship:
 
 	@classmethod
 	def from_tuple(cls, t:tuple):
-		# temp = json.loads(t[6])
-		# mods = []
-		# for mod in temp:
+		"""
+		Creates warship instance from tuple.
+		Use for creating warship instance from result in  warship database.
+		"""
 		d = {
 			'name': t[0],
 			'index': t[1],
@@ -42,6 +43,10 @@ class Warship:
 
 	@classmethod
 	def from_params(cls, gpm, params:dict):
+		"""
+		Creates warship instance of given parameters.
+		Use for creating warship instance from result in gameparams database.
+		"""
 		# description extracted outside each module
 		name = params['name']
 		index = params['index']

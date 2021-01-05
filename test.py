@@ -18,23 +18,12 @@ key = os.getenv('WOWS_APPLICATION_ID')
 db_path = 'wows.db'
 
 
-class TestImages(unittest.TestCase):
-	def test_create_image(self):
-		warship = WarshipDB().get_warship('select * from warship where nickname like "%Yamato%"')[0]
-		base = Image.open('res/base.jpeg').copy()
-		create_image(base, warship)
-
-	def test_process_image(self):
-		warship = WarshipDB().get_warship('select * from warship where nickname like "%Yamato%"')[0]
-		base = Image.open('res/base.jpeg').copy()
-
-
 class TestWarshipDB(unittest.TestCase):
 	def setUp(self):
 		self.db = WarshipDB()
 
 	def test_get_warship(self):
-		yamato = self.db.get_warship('select * from warship where nickname like "%Yamato%"')
+		yamato = self.db.get_warship('select * from warship where nickname=?', ('Yamato',))
 		self.assertIsNotNone(yamato)
 
 

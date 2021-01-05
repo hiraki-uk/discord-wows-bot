@@ -40,6 +40,11 @@ class WarshipDB:
     def insert_data(self, ships:list):
         """
         Insert data into database.
+
+        Params
+        ------
+        ships : list
+            list of ships.
         """
         # list for command, value
         l = []
@@ -77,4 +82,32 @@ class WarshipDB:
         self.db.insertmany(l)
 
 
-    
+    def get_warship(self, command, value):
+        """
+        Returns warship of given command.
+        Expects an exact match, else returns None.
+
+        Params
+        ------
+        command : str
+            e.g. SELECT * FROM warship WHERE nickname=?
+        
+        Returns
+        -------
+        warship : Warship
+            Warship instance of fetched data.
+        
+        None
+            Returned if multiple hit, or no hit.
+
+        """
+        results = self.db.fetchall(command, value)
+        # return if no results
+        if results is None:
+            return None
+        # if exact match, return that
+        if len(results) == 1:
+            warship = Warship.from_tuple(results[0])
+            return warship
+        # multiple hits, return none
+        return None

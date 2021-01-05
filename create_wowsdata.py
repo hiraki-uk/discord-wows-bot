@@ -77,11 +77,11 @@ def create_api_info():
 
 
 if __name__ == '__main__':
-	# create_api_info()
-	# print('done.')
-	# craete_raw_gp_db()
-	# print('done.')
-	# create_warships_db()
-	# print('done.')
+	create_api_info()
+	print('done.')
+	craete_raw_gp_db()
+	print('done.')
+	create_warships_db()
+	print('done.')
 	create_image_db()
 	print('Done.')

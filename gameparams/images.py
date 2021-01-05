@@ -15,6 +15,21 @@ font_color = (255, 255, 255)
 
 
 def process_image(binary_img, warship):
+	"""
+	Return binary final image of given binary image and warship.
+
+	Params
+	------
+	binary_img : binary
+		binary image of size 1920, 1080.
+	warship : Warship
+		warship instance.
+
+	Returns
+	------
+	final_img : binary
+		binary image after process. 
+	"""
 	img = Image.open(io.BytesIO(binary_img))
 	img = img.convert('RGB')
 	enhancer = ImageEnhance.Brightness(img)

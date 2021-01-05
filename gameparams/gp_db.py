@@ -57,7 +57,7 @@ class GameparamsDB:
 
 	def search_ship_id_str(self, name:str):
 		"""
-		Search for ship_id_str in ship_ids_str_api.txt file.
+		Search for ship_id_str in api_db.
 		Returns ship_id_str if only one found, list of names if multiple hit.
 
 		Returns

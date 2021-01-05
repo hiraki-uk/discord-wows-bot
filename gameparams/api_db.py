@@ -50,7 +50,7 @@ class ApiDB:
 		# for every ship create image
 		for id_int, img in results:
 			# get warship of it
-			warship = warshipdb.get_warship(f'SELECT * FROM warship WHERE shipid={id_int}')
+			warship = warshipdb.get_warship(f'SELECT * FROM warship WHERE shipid=?', (id_int,))
 			# if warship not found, continue
 			if not warship:
 				continue
@@ -73,7 +73,7 @@ class ApiDB:
 		"""
 		Get image.
 		"""
-		result = self.db.fetchall(f'SELECT name FROM ships WHERE name like?', (f'%{name}%',))
+		result = self.db.fetchall(f'SELECT name FROM ships WHERE name like ?', (f'%{name}%',))
 		results = list(map(lambda x: x[0], result))
 		# if one hit, return it
 		if len(results) == 1:

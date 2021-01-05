@@ -45,6 +45,10 @@ class Module:
 
     @classmethod
     def from_data(cls, data:dict):
+        """
+        Creates module instance of given data.
+        Use for creating mods from data in gameparams database.
+        """
         with open('res/base_module.json' ,'r') as f:
             temp = f.read()
         base_module = json.loads(temp)
