@@ -1,12 +1,9 @@
 import io
-from sqlite3.dbapi2 import Binary
-import discord
 
+import discord
 from discord.ext import commands
 from gameparams.api_db import ApiDB
 from utils.logger import Logger
-
-from wows.wowsapi import WowsApi
 
 filepath = 'res/temp.jpg'
 
@@ -16,7 +13,6 @@ class WowsCog(commands.Cog):
 		self.bot = bot
 		self.logger = Logger(self.__class__.__name__)
 		self.db = ApiDB()
-		self.api = WowsApi(wows_application_id)
 
 
 	@commands.command(aliases=['param'])
@@ -41,5 +37,8 @@ class WowsCog(commands.Cog):
 			await ctx.send(mes)
 		# send image
 		else:
-			data = io.BytesIO(result)
-			await ctx.send(file=discord.File(data, 'ship.png'))
+			try:
+				data = io.BytesIO(result)
+				await ctx.send(file=discord.File(data, 'ship.png'))
+			except:
+				await ctx.send('めっちゃ変なエラーでたごめんしあに伝えて～ｗ')

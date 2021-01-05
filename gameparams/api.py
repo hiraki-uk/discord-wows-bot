@@ -1,3 +1,7 @@
+"""
+Api class ONLY FOR GAMEPARAMETER PURPOSES!
+Not for general api use.
+"""
 import json
 import os
 import time
@@ -8,7 +12,6 @@ from dotenv import load_dotenv
 env_path = '.env'
 load_dotenv(dotenv_path=env_path)
 key = os.getenv('WOWS_APPLICATION_ID')
-
 
 class Api:
 	def __init__(self):
