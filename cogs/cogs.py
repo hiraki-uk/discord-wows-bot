@@ -61,11 +61,15 @@ class Cogs(commands.Cog):
 		""" ZEALホームページのURLだよ～ """
 		mes = ':thumbsup:\nhttps://zeal-corporation.sakura.ne.jp'
 		await ctx.send(mes)
-	@commands.command(aliases=['こんさん'])
-	async def konsan(self, ctx):
-		""" ZEALホームページのURLだよ～ """
-		mes = 'いい感じ!!(自社調べ)\n:kons:'
-		await ctx.send(mes)
+	# @commands.command(aliases=['こんさん'])
+	# async def konsan(self, ctx):
+	# 	""" ZEALホームページのURLだよ～ """
+	# 	emoji = ctx.bot.get_emoji(794537197436403742)
+	# 	if not emoji:
+	# 		return
+	# 	mes = f'https://twitter.com/himajin_0002/status/1345854915894120449\n\n' \
+	# 	f'いい感じ!!(自社調べ)\n{str(emoji)}'
+	# 	await ctx.send(mes)
 	# @commands.command()
 	# async def slot(self, ctx):
 	# 	""" ランク戦味方占い！"""
