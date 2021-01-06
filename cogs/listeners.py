@@ -22,7 +22,10 @@ class Listener(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message(self, mes):
-		self.logger.info(f'Message:{mes.content} author:{mes.author.name} id:{mes.author.id}')
+		# sia
+		if 'しあ' in mes.content:
+			emoji = self.bot.get_emoji(665800782561673217)
+			await mes.add_reaction(emoji)
 
 
 	@commands.Cog.listener()
