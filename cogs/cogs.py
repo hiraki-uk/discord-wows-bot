@@ -64,7 +64,7 @@ class Cogs(commands.Cog):
 	@commands.command(aliases=['こんさん'])
 	async def konsan(self, ctx):
 		""" ZEALホームページのURLだよ～ """
-		mes = 'いい感じ!!(自社調べ)\n'
+		mes = 'いい感じ!!(自社調べ)\n:kons:'
 		await ctx.send(mes)
 	# @commands.command()
 	# async def slot(self, ctx):
