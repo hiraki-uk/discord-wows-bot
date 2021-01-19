@@ -1,4 +1,3 @@
-from logging import exception
 import sqlite3
 import traceback
 from sqlite3 import Connection
