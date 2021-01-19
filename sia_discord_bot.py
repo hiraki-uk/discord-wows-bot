@@ -53,7 +53,7 @@ def bot_setup():
 			Shitposting(bot),
 			VoiceChannel(bot),
 			Weather(bot),
-			WowsCog(bot, wows_application_id),
+			WowsCog(bot),
 			# WowsDb(bot),
 			Twitter_manager(bot),
 	)

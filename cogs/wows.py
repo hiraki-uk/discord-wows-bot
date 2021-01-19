@@ -2,17 +2,15 @@ import io
 
 import discord
 from discord.ext import commands
-from gameparams.api_db import ApiDB
+from utils.database import Database
 from utils.logger import Logger
-
-filepath = 'res/temp.jpg'
 
 
 class WowsCog(commands.Cog):
-	def __init__(self, bot, wows_application_id):
+	def __init__(self, bot):
 		self.bot = bot
 		self.logger = Logger(self.__class__.__name__)
-		self.db = ApiDB()
+		self.db = ImgDB()
 
 
 	@commands.command(aliases=['param'])
@@ -42,3 +40,42 @@ class WowsCog(commands.Cog):
 				await ctx.send(file=discord.File(data, 'ship.png'))
 			except:
 				await ctx.send('めっちゃ変なエラーでたごめんしあに伝えて～ｗ')
+
+
+class ImgDB:
+	def __init__(self):
+		self.db = Database('res/id_api.db')
+
+
+	def get_image(self, name):
+		"""
+		Get image.
+		"""
+		result = self.db.fetchall(f'SELECT name FROM ships WHERE name like ?', (f'%{name}%',))
+		results = list(map(lambda x: x[0], result))
+		# if one hit, return it
+		if len(results) == 1:
+			img = self.get_image_fin(results[0])
+			return img
+		else:
+			names = [n for n in results if
+				not n.startswith('[') and
+				not n.endswith(' B') and
+				not n.startswith('ARP ')]
+			# if exact match
+			if len(names) == 1:
+				img = self.get_image_fin(names[0])
+				return img
+			for n in names:
+				if n.lower() == name.lower():
+					img = self.get_image_fin(n)
+					return img
+			return names
+
+			
+	def get_image_fin(self, name):
+		result = self.db.fetchone('SELECT img_final FROM ships WHERE name=?', (name,))
+		if len(result) == 1:
+			return result[0]
+
+

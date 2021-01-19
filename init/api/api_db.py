@@ -1,6 +1,6 @@
-# from gameparams.images import *
 from utils.database import Database
 
+from ..image.images import process_image
 from .api import Api
 
 path = 'res/id_api.db'
