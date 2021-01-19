@@ -32,11 +32,12 @@ class Module:
         return temp
 
 
-    def simplified(self):
+    def simplified(self, i18n):
         """
         Returns simplified data for storing in database.
         """
-        d = {'name': self.name, 
+        
+        d = {'name': i18n.get_msgstr(self.name), 
             'slot': self.slot, 
             'stats': self.stats
         }

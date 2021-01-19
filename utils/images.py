@@ -1,13 +1,7 @@
 import io
-from os import terminal_size
-import pickle
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 
-from gameparams.warship import Warship
-
-base_path = 'res/base.jpeg'
-output_path = 'res/temp.jpg'
 
 font_path = 'c://windows/fonts/yumin.ttf'
 font_size = 28
@@ -105,7 +99,7 @@ def create_mod_text(l:list):
 	return text
 
 
-def create_image(base, warship:Warship):
+def create_image(base, warship):
 	"""
 	Creates description image of given warship.
 	"""

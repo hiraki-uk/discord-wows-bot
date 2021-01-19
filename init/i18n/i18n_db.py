@@ -42,9 +42,9 @@ class I18NDb:
         self.db.insertmany(l)
         
     
-    def get_megstr(self, msgid):
+    def get_msgstr(self, msgid):
         command = 'SELECT msgstr from message WHERE msgid LIKE ?'
-        result = self.db.fetchone(command, (msgid,))
+        result = self.db.fetchone(command, (f'IDS_TITLE_{msgid}%',))
         if not result:
             return
         if not len(result) == 1:

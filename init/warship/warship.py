@@ -22,7 +22,7 @@ class Warship:
 	def from_tuple(cls, t:tuple):
 		"""
 		Creates warship instance from tuple.
-		Use for creating warship instance from result in  warship database.
+		Use for creating warship instance from result in warship database.
 		"""
 		d = {
 			'name': t[0],
@@ -42,7 +42,7 @@ class Warship:
 
 
 	@classmethod
-	def from_params(cls, gpm, params:dict):
+	def from_params(cls, gpm, i18n, params:dict):
 		"""
 		Creates warship instance of given parameters.
 		Use for creating warship instance from result in gameparams database.
@@ -76,7 +76,7 @@ class Warship:
 		for mod in all_mods:
 			if is_eligible(name, tier, species, nation, mod):
 				idx = mod.slot
-				mods[idx].append(mod.simplified())
+				mods[idx].append(mod.simplified(i18n))
 			
 		for key, value in params.items():
 			try:

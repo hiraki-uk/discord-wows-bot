@@ -2,18 +2,43 @@ import json
 
 from utils.database import Database
 
-from gameparams.artillery import Artillery
-from gameparams.module import Module
-from gameparams.warship import Warship
+from .artillery import Artillery
+from .module import Module
+from ..warship.warship import Warship
 
 db_path = 'res/gameparams.db'
 id_api_db_path = 'res/id_api.db'
+gp_json_path = 'res/gameparams.json'
+
+
+def create_gp_db():
+	with open(gp_json_path, 'r') as f:
+		s = f.read()
+	s_json = json.loads(s)
+	# get table names
+	species = []
+	for _, value in s_json.items():
+		temp = value['typeinfo']
+		for key1, value1 in temp.items():
+			if key1 == 'species':
+				if value1 not in species:
+					# if none use string none
+					if value1 is None:
+						if 'None' not in species:
+							species.append('None')               
+					else:
+						species.append(value1)
+	# for storing raw data
+	db = GameparamsDB()
+	db.init_db(species)
+	db.insert_data(s_json)
 
 
 class GameparamsDB:
 	def __init__(self) -> None:
 		self.db = Database(db_path) 
 		self.id_api_db = Database(id_api_db_path)
+
 
 	def init_db(self, species):
 		# list for commands
@@ -88,7 +113,7 @@ class GameparamsDB:
 			return ship_names
 
 
-	def search_ship(self, index_str:str, v=False):
+	def search_ship(self, index_str:str, i18n, v=False):
 		"""
 		Search for ship with given index_str.
 		
@@ -117,7 +142,7 @@ class GameparamsDB:
 		data = json.loads(result)
 		if v:
 			return data
-		ship = Warship.from_params(self, data)
+		ship = Warship.from_params(self, i18n, data)
 		return ship
 
 

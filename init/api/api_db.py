@@ -1,9 +1,29 @@
-from inspect import isdatadescriptor
+# from gameparams.images import *
 from utils.database import Database
 
-from gameparams.images import *
+from .api import Api
 
 path = 'res/id_api.db'
+
+
+def create_api_db():
+	"""
+	Create id_api.db file.
+	"""
+	wows = Api()
+	db = ApiDB()
+	db.init_db()
+	
+	# get total number of pages
+	result = wows.get_ship_id_str_pages()
+	if result is None: return
+	ships = []
+	# fetch each page, save ship data
+	for page in range(result):
+		result = wows.fetch_ship_info(page+1)
+		if result is None: return
+		ships.extend(result)
+	db.insert_data(ships)
 
 
 class ApiDB:
@@ -21,25 +41,28 @@ class ApiDB:
 
 
 	def insert_data(self, ships):
-		for ship in ships:
-			self.db.execute('INSERT INTO ships (id_int, name, id_str, img, img_final) VALUES (?,?,?,?,?)',
-							(ship['id'], ship['name'], ship['id_str'], ship['img'], ship['img_final']))
-	
+		command = 'INSERT INTO ships (id_int, name, id_str, img, img_final) VALUES (?,?,?,?,?)'
+		l = [(
+				command,
+				(ship['id'], ship['name'], ship['id_str'], ship['img'], ship['img_final'])
+			) for ship in ships]
+		self.db.insertmany(l)
 
 	def list_all_ships(self):
 		"""
 		Get list of IMPLEMENTED SHIPS ONLY
 		"""
-		command = f'SELECT name, id_str FROM ships'
+		command = 'SELECT name, id_str FROM ships'
 		results = self.db.fetchall(command)
 		return results
-		
+
 	
 	def get_name(self, id_str):
 		command = f'SELECT name FROM ships WHERE id_str=?'
 		result = self.db.fetchone(command, values=(id_str,))
 		if result:
 			return result[0]
+
 
 	def process_images(self, warshipdb):
 		"""
@@ -66,7 +89,6 @@ class ApiDB:
 		result = self.db.fetchone('SELECT img_final FROM ships WHERE name=?', (name,))
 		if len(result) == 1:
 			return result[0]
-
 
 
 	def get_image(self, name):
