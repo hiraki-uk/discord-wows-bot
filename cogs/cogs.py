@@ -1,7 +1,7 @@
 import datetime
 import os
 
-from discord.ext import commands
+from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from utils.logger import Logger
 
@@ -19,6 +19,7 @@ class Cogs(commands.Cog):
 		self.bot = bot
 		self.logger = Logger(self.__class__.__name__)
 		self.last_sent_date = None
+		self.hanshin_task.start()
 
 	# version
 	@commands.command()
@@ -81,3 +82,19 @@ class Cogs(commands.Cog):
 	# 	sol = [prefix[i] + ships[i] for i in range(indexes)]
 
 	# 	await ctx.send('\n'.join(sol))
+
+	@tasks.loop(seconds=50)	
+	async def hanshin_task(self):	
+		print('Starting hanshin task.')	
+		now = datetime.datetime.now(tz=tz)	
+		if not (now.hour == 8 and now.minute == 50):	
+			return	
+		if self.last_sent_date == now.date():	
+			return	
+		else:	
+			self.last_sent_date = now.date()	
+
+		for guild in self.bot.guilds:	
+			for channel in guild.channels:	
+				if channel.name == 'bot-room':	
+					await channel.send('334の時間だよ！！！！！') 
