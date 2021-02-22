@@ -87,7 +87,7 @@ class Cogs(commands.Cog):
 	async def hanshin_task(self):	
 		print('Starting hanshin task.')	
 		now = datetime.datetime.now(tz=tz)	
-		if not (now.hour == 8 and now.minute == 50):	
+		if not (now.hour == 3 and now.minute == 30):	
 			return	
 		if self.last_sent_date == now.date():	
 			return	
