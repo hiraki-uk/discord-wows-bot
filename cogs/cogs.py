@@ -97,4 +97,4 @@ class Cogs(commands.Cog):
 		for guild in self.bot.guilds:	
 			for channel in guild.channels:	
 				if channel.name == 'bot-room':	
-					await channel.send('334の時間だよ！！！！！') 
+					await channel.send('<@&819637690349256765> 334の時間だよ！！！！！') 
