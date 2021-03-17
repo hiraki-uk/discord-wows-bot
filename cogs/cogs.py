@@ -3,6 +3,7 @@ import os
 
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
+from utils.calc import NumericStringParser
 from utils.logger import Logger
 
 tz = datetime.timezone(datetime.timedelta(hours=9))
@@ -18,8 +19,12 @@ class Cogs(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.logger = Logger(self.__class__.__name__)
+		self.nsp = NumericStringParser()
 		self.last_sent_date = None
+		self.tofu_sent_date = None
 		self.hanshin_task.start()
+		self.tofu_task.start()
+
 
 	# version
 	@commands.command()
@@ -62,6 +67,15 @@ class Cogs(commands.Cog):
 		""" ZEALホームページのURLだよ～ """
 		mes = ':thumbsup:\nhttps://zeal-corporation.sakura.ne.jp'
 		await ctx.send(mes)
+
+	# # calculations
+	# async def calc(self, ctx, *args):
+	# 	"""計算するよ～"""
+	# 	arg = 
+	# 	try:
+	# 		result = self.nsp.eval(ctx.)
+
+
 	# @commands.command(aliases=['こんさん'])
 	# async def konsan(self, ctx):
 	# 	""" ZEALホームページのURLだよ～ """
@@ -98,3 +112,18 @@ class Cogs(commands.Cog):
 			for channel in guild.channels:	
 				if channel.name == 'bot-room':	
 					await channel.send('<@&819637690349256765> 334の時間だよ！！！！！') 
+
+
+	@tasks.loop(seconds=50)	
+	async def tofu_task(self):	
+		print('Starting tofu task.')	
+		now = datetime.datetime.now(tz=tz)	
+		if not (now.hour == 20 and now.minute == 30):	
+			return	
+		if self.tofu_sent_date == now.date():	
+			return	
+		else:	
+			self.tofu_sent_date = now.date()	
+
+		channel = self.bot.get_channel(815232277540765719)
+		await channel.send('おくすりのんだ？') 

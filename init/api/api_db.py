@@ -37,7 +37,19 @@ class ApiDB:
 			name TEXT,
 			id_str TEXT,
 			img BLOB,
-			img_final BLOB)""")
+			img_final BLOB
+			nickname TEXT,
+			idx TEXT,
+			shipid INTEGER PRIMARY KEY,
+			tier INTGER,
+			species TEXT,
+			nation TEXT,
+			mods TEXT,
+			artilleries TEXT,
+			engines TEXT,
+			firecontrols TEXT,
+			hulls TEXT,
+			torpedoes TEXT)""")
 
 
 	def insert_data(self, ships):
@@ -80,7 +92,7 @@ class ApiDB:
 			# resize, enhance
 			processed_img = process_image(img, warship)
 			l.append((
-				f'UPDATE ships SET img_final=? WHERE id_int={id_int}',
+				f'UPDATE ships SET img_final=?, WHERE id_int={id_int}',
 				(processed_img,)))
 		self.db.insertmany(l)
 
