@@ -12,10 +12,11 @@ from dotenv import load_dotenv
 
 from cogs.cogs import Cogs
 from cogs.listeners import Listener
+from cogs.maps import MapsCog
 # from cogs.membersCog import MembersCog
 from cogs.roles import Roles
 from cogs.shitposting import Shitposting
-from cogs.twitter_manager import Twitter_manager
+# from cogs.twitter_manager import Twitter_manager
 from cogs.vc import VoiceChannel
 from cogs.weather import Weather
 from cogs.wows import WowsCog
@@ -49,13 +50,14 @@ def bot_setup():
 			Cogs(bot),
 			Roles(bot),
 			Listener(bot),
+			MapsCog(bot),
 			# MembersCog(bot, wows_application_id),
 			Shitposting(bot),
 			VoiceChannel(bot),
 			Weather(bot),
 			WowsCog(bot),
 			# WowsDb(bot),
-			Twitter_manager(bot),
+			# Twitter_manager(bot),
 	)
 	return bot, key
 

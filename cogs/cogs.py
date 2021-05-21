@@ -21,9 +21,7 @@ class Cogs(commands.Cog):
 		self.logger = Logger(self.__class__.__name__)
 		self.nsp = NumericStringParser()
 		self.last_sent_date = None
-		self.tofu_sent_date = None
 		self.hanshin_task.start()
-		self.tofu_task.start()
 
 
 	# version
@@ -112,18 +110,3 @@ class Cogs(commands.Cog):
 			for channel in guild.channels:	
 				if channel.name == 'bot-room':	
 					await channel.send('<@&819637690349256765> 334の時間だよ！！！！！') 
-
-
-	@tasks.loop(seconds=50)	
-	async def tofu_task(self):	
-		print('Starting tofu task.')	
-		now = datetime.datetime.now(tz=tz)	
-		if not (now.hour == 20 and now.minute == 30):	
-			return	
-		if self.tofu_sent_date == now.date():	
-			return	
-		else:	
-			self.tofu_sent_date = now.date()	
-
-		channel = self.bot.get_channel(815232277540765719)
-		await channel.send('おくすりのんだ？') 

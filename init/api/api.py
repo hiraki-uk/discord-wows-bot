@@ -66,3 +66,30 @@ class Api:
 				}
 			)
 		return data
+
+
+	def fetch_maps(self):
+		"""
+		Get dict of map names and images from api as list.
+
+		Returns
+		-------
+		d : dict
+			dict of map name and image.
+			{'Ocean':b'0011011', ...}
+		"""
+		time.sleep(0.1)
+		_base_url = 'https://api.worldofwarships.asia/wows/encyclopedia/battlearenas/?application_id={}&language={}'
+		result = requests.get(_base_url.format(key, 'en'))
+		if result.status_code != 200:return
+		text = result.text
+		temp = json.loads(text)
+		if temp['status'] != 'ok': return
+		d = {}
+		# hoping there won't be more than 100 maps...
+		data = temp['data']
+		for value in data.values():
+			name = value['name']
+			icon = requests.get(value['icon']).content
+			d[name] = icon
+		return d

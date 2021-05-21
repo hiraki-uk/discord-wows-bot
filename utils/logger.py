@@ -6,7 +6,7 @@ class Logger:
 	__slots__ = ('logger',)
 
 	def __init__(self, name=__name__, propagete=False):
-		level = INFO
+		level = DEBUG
 		self.logger = getLogger(name)
 		self.logger.setLevel(level)
 		self.logger.propagate = propagete
