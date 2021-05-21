@@ -3,7 +3,7 @@ import os
 
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
-from utils.fourFn import calc
+from utils.fourFn import calc as c
 from utils.logger import Logger
 
 tz = datetime.timezone(datetime.timedelta(hours=9))
@@ -67,9 +67,9 @@ class Cogs(commands.Cog):
 
 	# calculations
 	@commands.command()
-	async def calc(self, ctx, *, args):
+	async def eval(self, ctx, *, args):
 		"""使える文字は ^,*,/,+,-,PI,E,(,),sin,cos,tan,exp,abs,trunc,round,sgn,multiply,hypot,allだよ！"""
-		result = calc(args)
+		result = c(args)
 		if not result:
 			await ctx.send('はいエラー')
 			return
