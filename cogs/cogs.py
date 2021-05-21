@@ -3,7 +3,7 @@ import os
 
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
-from utils.calc import NumericStringParser
+from utils.fourFn import calc
 from utils.logger import Logger
 
 tz = datetime.timezone(datetime.timedelta(hours=9))
@@ -19,7 +19,6 @@ class Cogs(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.logger = Logger(self.__class__.__name__)
-		self.nsp = NumericStringParser()
 		self.last_sent_date = None
 		self.hanshin_task.start()
 
@@ -66,13 +65,15 @@ class Cogs(commands.Cog):
 		mes = ':thumbsup:\nhttps://zeal-corporation.sakura.ne.jp'
 		await ctx.send(mes)
 
-	# # calculations
-	# async def calc(self, ctx, *args):
-	# 	"""計算するよ～"""
-	# 	arg = 
-	# 	try:
-	# 		result = self.nsp.eval(ctx.)
-
+	# calculations
+	@commands.command()
+	async def calc(self, ctx, *, args):
+		"""使える文字は ^,*,/,+,-,PI,E,(,),sin,cos,tan,exp,abs,trunc,round,sgn,multiply,hypot,allだよ！"""
+		result = calc(args)
+		if not result:
+			await ctx.send('はいエラー')
+			return
+		await ctx.send(result)
 
 	# @commands.command(aliases=['こんさん'])
 	# async def konsan(self, ctx):
