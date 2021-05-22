@@ -22,7 +22,6 @@ class Cogs(commands.Cog):
 		self.last_sent_date = None
 		self.hanshin_task.start()
 
-
 	# version
 	@commands.command()
 	async def version(self, ctx):
@@ -67,10 +66,12 @@ class Cogs(commands.Cog):
 
 	# calculations
 	@commands.command()
-	async def eval(self, ctx, *, args):
+	async def eva(self, ctx, *, args):
 		"""使える文字は ^,*,/,+,-,PI,E,(,),sin,cos,tan,exp,abs,trunc,round,sgn,multiply,hypot,allだよ！"""
+		print('Starting eval.')
 		result = c(args)
-		if not result:
+		print(result)
+		if result is None:
 			await ctx.send('はいエラー')
 			return
 		await ctx.send(result)
