@@ -29,6 +29,7 @@ class MapsCog(commands.Cog):
 		# multiple matches
 		elif isinstance(result, list):
 			self.logger.info('Found multiple matches.')
+			
 			mes = 'いっぱいヒットしちゃったよ～' \
 				'```' + ', '.join(result) + '```'
 			await ctx.send(mes)

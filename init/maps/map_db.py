@@ -47,4 +47,9 @@ class MapDB:
             return img
         else:
             names = [result[0] for result in results]
+            # if exact match found
+            for result in results:
+                if name.lower() == result[0].lower():
+                    img = result[1]
+                    return img
             return names
