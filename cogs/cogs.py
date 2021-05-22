@@ -3,7 +3,7 @@ import os
 
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
-from utils.fourFn import calc as c
+from utils.fourFn import calc
 from utils.logger import Logger
 
 tz = datetime.timezone(datetime.timedelta(hours=9))
@@ -66,25 +66,26 @@ class Cogs(commands.Cog):
 
 	# calculations
 	@commands.command()
-	async def eva(self, ctx, *, args):
-		"""使える文字は ^,*,/,+,-,PI,E,(,),sin,cos,tan,exp,abs,trunc,round,sgn,multiply,hypot,allだよ！"""
-		print('Starting eval.')
-		result = c(args)
-		print(result)
+	async def eval(self, ctx, *, args=None):
+		""" ^,*,/,+,-,PI,E,(,),sin,cos,tan,exp,abs,trunc,round,sgn,multiply,hypot,all使えるよ！"""
+		if args is None:
+			await ctx.send('ゼロ！うるせえかえれ！')
+			return
+		result = calc(args)
 		if result is None:
 			await ctx.send('はいエラー')
 			return
 		await ctx.send(result)
 
-	# @commands.command(aliases=['こんさん'])
-	# async def konsan(self, ctx):
-	# 	""" ZEALホームページのURLだよ～ """
-	# 	emoji = ctx.bot.get_emoji(794537197436403742)
-	# 	if not emoji:
-	# 		return
-	# 	mes = f'https://twitter.com/himajin_0002/status/1345854915894120449\n\n' \
-	# 	f'いい感じ!!(自社調べ)\n{str(emoji)}'
-	# 	await ctx.send(mes)
+	@commands.command(aliases=['こんさん'])
+	async def konsan(self, ctx):
+		""" こんさん！？！？！？ """
+		emoji = ctx.bot.get_emoji(794537197436403742)
+		if not emoji:
+			return
+		mes = f'いい感じ!!(自社調べ)\n{str(emoji)}'
+		await ctx.send(mes)
+
 	# @commands.command()
 	# async def slot(self, ctx):
 	# 	""" ランク戦味方占い！"""
