@@ -40,7 +40,7 @@ class ApiDB:
 			img_final BLOB
 			nickname TEXT,
 			idx TEXT,
-			shipid INTEGER PRIMARY KEY,
+			shipid INTEGER,
 			tier INTGER,
 			species TEXT,
 			nation TEXT,

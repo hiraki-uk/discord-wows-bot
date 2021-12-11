@@ -7,8 +7,8 @@ from utils.logger import Logger
 
 
 class WowsCog(commands.Cog):
-	def __init__(self, bot):
-		self.bot = bot
+	def __init__(self, mitsuba):
+		self.bot = mitsuba.bot
 		self.logger = Logger(self.__class__.__name__)
 		self.db = ImgDB()
 

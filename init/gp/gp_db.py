@@ -14,7 +14,7 @@ gp_json_path = 'res/gameparams.json'
 def create_gp_db():
 	with open(gp_json_path, 'r') as f:
 		s = f.read()
-	s_json = json.loads(s)
+	s_json = json.loads(s)[0]
 	# get table names
 	species = []
 	for _, value in s_json.items():

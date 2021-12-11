@@ -6,8 +6,9 @@ from utils.logger import Logger
 class Listener(commands.Cog):
 	__slots__ = ('bot', 'logger')
 	
-	def __init__(self, bot):
-		self.bot = bot
+	def __init__(self, mitsuba):
+		self.bot = mitsuba.bot
+		self.config = mitsuba.config
 		self.logger = Logger(self.__class__.__name__)
 
 
@@ -23,15 +24,15 @@ class Listener(commands.Cog):
 	@commands.Cog.listener()
 	async def on_message(self, mes):
 		# sia
-		if 'しあ' in mes.content:
+		if 'しあ' in mes.content or 'シア' in mes.content:
 			emoji = self.bot.get_emoji(665800782561673217)
 			await mes.add_reaction(emoji)
 
 
 	@commands.Cog.listener()
 	async def on_command_error(self, ctx, error):
-		pass
-
+		if self.config['debug'] is True:
+			pass
 
 	@commands.Cog.listener()
 	async def on_member_remove(self, member):

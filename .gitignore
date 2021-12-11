@@ -132,3 +132,4 @@ members.json
 *.data
 *.db
 temp.*
+config/config.ini

@@ -7,8 +7,8 @@ from utils.logger import Logger
 
 
 class MapsCog(commands.Cog):
-	def __init__(self, bot) -> None:
-		self.bot = bot
+	def __init__(self, mitsuba) -> None:
+		self.bot = mitsuba.bot
 		self.logger = Logger(self.__class__.__name__)
 		self.db = MapDB()
 

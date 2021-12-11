@@ -22,16 +22,16 @@ class Scrape_weather:
 		comment = ''
 		for string in strings:
 			comment += string
+		comment = comment.strip()
 		return tenkidata, comment
 
 
 	def tenki_data(self):
 		td, c = self.raw_tenki_data()
 		raw_tenkilist = []
-		for data in td:
-			# get rid of unwanted space results
-			if (data == ' '): continue
-			raw_tenkilist.append(data)
+		for _data in td:
+			if _data == '\n': continue
+			raw_tenkilist.append(_data) 
 		return raw_tenkilist, c
 
 
@@ -39,7 +39,7 @@ class Scrape_weather:
 		tl, c = self.tenki_data()
 		tenkilist = []
 		for tenki in tl:
-			if tenki.dt.string in ['釧路', '金沢', '鹿児島', '那覇']:
+			if tenki.dt.string in ['釧路', '鹿児島', '那覇']:
 				continue
 			tmp = {}
 			tmp['city'] = tenki.dt.string
@@ -82,14 +82,14 @@ class Scrape_weather:
 class Weather(commands.Cog):
 	__slots__ = ('bot', 'logger', 'last_sent_date')
 	
-	def __init__(self, bot):
-		self.bot = bot
+	def __init__(self, mitsuba):
+		self.bot = mitsuba.bot
 		self.logger = Logger(self.__class__.__name__)
 		self.last_sent_date = None
 		self.weather_task.start()
 
 
-	@commands.command()
+	@commands.command(aliases=['天気', 'てんき'])
 	async def weather(self, ctx):
 		""" 天気を教えるよ！ """
 		self.logger.debug('Creating weather embed.')

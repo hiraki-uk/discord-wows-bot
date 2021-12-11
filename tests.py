@@ -1,8 +1,13 @@
 import unittest
 from init.api.api import Api
 from init.maps.map_db import MapDB
+from config.config import get_config
 
-
+class TestGetConfig(unittest.TestCase):
+    def test_get_config(self):
+        conf = get_config()
+        self.assertFalse(conf['debug'])
+        
 # class TestApi(unittest.TestCase):
 #     def setUp(self):
 #         self.api = Api()
@@ -21,16 +26,16 @@ from init.maps.map_db import MapDB
 #         self.assertIsInstance(result, dict)
 
 
-class TestMapDB(unittest.TestCase):
-    def setUp(self) -> None:
-        self.db = MapDB()
+# class TestMapDB(unittest.TestCase):
+#     def setUp(self) -> None:
+#         self.db = MapDB()
     
-    def test_get_image(self):
-        imges = self.db.get_image('O')
-        self.assertIsInstance(imges, list)
+#     def test_get_image(self):
+#         imges = self.db.get_image('O')
+#         self.assertIsInstance(imges, list)
 
-        img = self.db.get_image('Oc')
-        self.assertIsInstance(img, bytes)
+#         img = self.db.get_image('Oc')
+#         self.assertIsInstance(img, bytes)
 
 
 

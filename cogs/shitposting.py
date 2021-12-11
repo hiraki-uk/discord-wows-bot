@@ -7,25 +7,25 @@ from cogs.cogfunctions.honda import janken_process as janken_proc
 class Shitposting(commands.Cog):
 	"""	産業廃棄物処理場 """
 
-	@commands.command()
+	@commands.command(aliases=['えるしゃだい', 'エルシャダイ'])
 	async def elshaddai(self, ctx):
 		""" 話をしよう。あれはー """
 		with open('res/elshaddai.txt', 'r', encoding='utf-8') as f:
 			await ctx.send('```' + f.read() + '```')
 			
-	@commands.command()
+	@commands.command(aliases=['土方', 'どかた'])
 	async def dokata(self, ctx):
 		""" やったぜ。投稿者: 変態糞土方 """
 		with open('res/dokata.txt', 'r', encoding='utf-8') as f:
 			await ctx.send('```' + f.read() + '```')
 			
-	@commands.command()
+	@commands.command(aliases=['JOW'])
 	async def jow(self, ctx):
 		""" ～JOWは懲罰する～ """
 		with open('res/jow.txt', 'r', encoding='utf-8') as f:
 			await ctx.send('```' + f.read() + '```')
 
-	@commands.command()
+	@commands.command(aliases=['喰いタン', 'くいたん', 'クイタン'])
 	async def kuitan(self, ctx):
 		""" 喰いタンを許すな """
 		with open('res/kuitan.txt', 'r', encoding='utf-8') as f:

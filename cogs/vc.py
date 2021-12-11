@@ -7,16 +7,20 @@ from utils.logger import Logger
 class VoiceChannel(commands.Cog):
 	__slots__ = ('bot', 'logger')
 	
-	def __init__(self, bot):
-		self.bot = bot
+	def __init__(self, mitsuba):
+		self.bot = mitsuba.bot
 		self.logger = Logger(self.__class__.__name__)
 
 		
 	# change voice channel's bit rate
-	@commands.command()
+	@commands.command(aliases=['ビットレート', 'びっとれーと'])
 	async def bitrate(self, ctx, bitrate=None):
 		""" 今いるvcのビットレートを変更するよ！ """
-		vc = ctx.author.voice.channel
+		try:
+			vc = ctx.author.voice.channel
+		except:
+			await ctx.send('ハゲろ！')
+			return			
 		if vc == None:
 			await ctx.send('vcに入ってないとこの機能は使えないよ！')
 			return

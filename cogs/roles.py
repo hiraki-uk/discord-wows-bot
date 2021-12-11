@@ -9,30 +9,27 @@ from utils.logger import Logger
 class Roles(commands.Cog):
 	__slots__ = ('bot', 'logger')
 
-	def __init__(self, bot):
-		self.bot = bot
+	def __init__(self, mitsuba):
+		self.bot = mitsuba.bot
 		self.logger = Logger(self.__class__.__name__)
 
 
-	@commands.group()
+	@commands.group(aliases=['役職', 'やくしょく'])
 	async def roles(self, ctx):
 		""" 役職をいじれるよ！ """
 		if ctx.invoked_subcommand is None:
 			await ctx.send('コマンドも教えてね！')
 
 
-	# @roles.command()
-	# async def create(self, ctx, name, color='red'):
-	# 	""" 役職を作るよ！ roles create '役職の名前' '色（英語で教えてね！）' """
-	# 	try:
-	# 		color = matplotlib.colors.cnames.get(color)
-	# 	except IndexError:
-	# 		await ctx.send('名前と色も教えてね！')	
-	# 		return
-
-	# 	color = discord.Colour(int(str(color)[1:], 16))
-	# 	await ctx.guild.create_role(name=name, colour=color)
-	# 	await ctx.send(name + ', いっちょあがり！')
+	@roles.command(aliases=['作成', 'さくせい'])
+	async def create(self, ctx, name=None):
+		""" 役職を作るよ！ roles create '役職の名前'を教えてね！ """
+		if name is None:
+			await ctx.send('名前なににすんねん！')
+			return
+		color = discord.Colour.red()
+		await ctx.guild.create_role(name=name, colour=color)
+		await ctx.send(name + ', いっちょあがり！')
 
 
 	@roles.command()
