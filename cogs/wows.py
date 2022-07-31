@@ -47,7 +47,7 @@ class WowsCog(commands.Cog):
 
 class ImgDB:
 	def __init__(self):
-		self.db = Database('res/id_api.db')
+		self.db = Database('res/id_api.sqlite')
 
 
 	def get_image(self, name):

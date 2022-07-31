@@ -7,7 +7,7 @@ from .module import Module
 from ..warship.warship import Warship
 
 db_path = 'res/gameparams.db'
-id_api_db_path = 'res/id_api.db'
+id_api_db_path = 'res/id_api.sqlite'
 gp_json_path = 'res/gameparams.json'
 
 

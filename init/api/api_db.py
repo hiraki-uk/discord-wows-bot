@@ -8,7 +8,7 @@ path = 'res/id_api.sqlite'
 
 def create_api_db():
 	"""
-	Create id_api.db file.
+	Create id_api.sqlite file.
 	"""
 	wows = Api()
 	db = ApiDB()
