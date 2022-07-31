@@ -3,7 +3,7 @@ from utils.database import Database
 from ..image.images import process_image
 from .api import Api
 
-path = 'res/id_api.db'
+path = 'res/id_api.sqlite'
 
 
 def create_api_db():
@@ -92,7 +92,7 @@ class ApiDB:
 			# resize, enhance
 			processed_img = process_image(img, warship)
 			l.append((
-				f'UPDATE ships SET img_final=?, WHERE id_int={id_int}',
+				f'UPDATE ships SET img_final=? WHERE id_int={id_int}',
 				(processed_img,)))
 		self.db.insertmany(l)
 
