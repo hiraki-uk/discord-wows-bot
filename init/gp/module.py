@@ -66,7 +66,10 @@ class Module:
 
         for key, value in data.items():
             # for key, compare with base value
-            base_value = base_module[key]
+            try:
+                base_value = base_module[key]
+            except:
+                continue
             if base_value != value:
                 if key == 'shiplevel':
                     shiplevel = value
