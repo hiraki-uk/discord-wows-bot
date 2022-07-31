@@ -7,6 +7,7 @@ import asyncio
 from cogs.cogs import Cogs
 from cogs.listeners import Listener
 from cogs.maps import MapsCog
+from cogs.pdf2image import Pdf2Image
 from cogs.roles import Roles
 from cogs.shitposting import Shitposting
 from cogs.vc import VoiceChannel
@@ -22,6 +23,7 @@ key = mitsuba.config['discord_bot_key']
 add_cogs(bot,
 	Cogs(mitsuba),
 	Roles(mitsuba),
+	# Pdf2Image(mitsuba),
 	Listener(mitsuba),
 	MapsCog(mitsuba),
 	Shitposting(mitsuba),

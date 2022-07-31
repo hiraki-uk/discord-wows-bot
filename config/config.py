@@ -15,6 +15,7 @@ def get_config():
         'prefix': d.get('prefix'),
         'discord_bot_key': d.get('discord_bot_key'),
         'activity_name': d.get('activity_name'),
-        'debug': d.getboolean('debug')
+        'debug': d.getboolean('debug'),
+        'poppler_bin': d.get('poppler_bin')
     }
     return conf
