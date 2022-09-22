@@ -1,3 +1,4 @@
+import tqdm
 from utils.database import Database
 
 from ..image.images import process_image
@@ -19,7 +20,7 @@ def create_api_db():
 	if result is None: return
 	ships = []
 	# fetch each page, save ship data
-	for page in range(result):
+	for page in tqdm.tqdm(range(result)):
 		result = wows.fetch_ship_info(page+1)
 		if result is None: return
 		ships.extend(result)
@@ -37,19 +38,7 @@ class ApiDB:
 			name TEXT,
 			id_str TEXT,
 			img BLOB,
-			img_final BLOB
-			nickname TEXT,
-			idx TEXT,
-			shipid INTEGER,
-			tier INTGER,
-			species TEXT,
-			nation TEXT,
-			mods TEXT,
-			artilleries TEXT,
-			engines TEXT,
-			firecontrols TEXT,
-			hulls TEXT,
-			torpedoes TEXT)""")
+			img_final BLOB)""")
 
 
 	def insert_data(self, ships):

@@ -69,6 +69,7 @@ class Module:
             try:
                 base_value = base_module[key]
             except:
+                print(f'module not found : {key}')
                 continue
             if base_value != value:
                 if key == 'shiplevel':

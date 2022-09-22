@@ -118,3 +118,8 @@ class Weather(commands.Cog):
 				if channel.name == 'main':
 					await channel.send('```' + c + '```', embed=e)
 		del scraper, e, c
+
+
+	@weather_task.before_loop
+	async def before_weather_task(self):
+		await self.bot.wait_until_ready()

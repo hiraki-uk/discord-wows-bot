@@ -3,22 +3,19 @@ Api class ONLY FOR GAMEPARAMETER PURPOSES!
 Not for general api use.
 """
 import json
-import os
 import time
 
 import requests
-from dotenv import load_dotenv
+from config.config import get_config
 
-env_path = '.env'
-load_dotenv(dotenv_path=env_path)
-key = os.getenv('WOWS_APPLICATION_ID')
+key = get_config()['WOWS_APPLICATION_ID']
 
 
 class Api:
 	def __init__(self):
 		self._base = 'https://api.worldofwarships.asia/wows/encyclopedia/ships/?application_id={}&fields={}&language=en&page_no={}'
 
-	def get_ship_id_str_pages(self):
+	def get_ship_id_str_pages(self) -> int:
 		"""
 		Get how many ship_id_str pages you need to fetch.
 		
@@ -36,7 +33,7 @@ class Api:
 		return pages
 
 
-	def fetch_ship_info(self, page:int):
+	def fetch_ship_info(self, page:int) -> list:
 		"""
 		Get ship_ids_str and ship_ids from api as list.
 		

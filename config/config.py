@@ -16,6 +16,6 @@ def get_config():
         'discord_bot_key': d.get('discord_bot_key'),
         'activity_name': d.get('activity_name'),
         'debug': d.getboolean('debug'),
-        'poppler_bin': d.get('poppler_bin')
+        'WOWS_APPLICATION_ID': d.get('WOWS_APPLICATION_ID'),
     }
     return conf

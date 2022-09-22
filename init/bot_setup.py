@@ -5,17 +5,16 @@ from discord.ext import commands
 
 
 class Mitsuba:
+	__slots__ = ('config', 'bot')
+	
 	def __init__(self):
 		self.config = get_config()
-		bot = bot_setup(self.config)
-		self.bot = bot
+		self.bot = bot_setup(self.config)
 
 
 def bot_setup(config):
 	# register activity, prefix, commands, intents
-	intents = discord.Intents.default()
-	intents.presences = True
-	intents.members = True
+	intents = discord.Intents.all()
 
 	if config['activity_name'] is None:
 		bot = commands.Bot(command_prefix=config['prefix'], intents=intents)

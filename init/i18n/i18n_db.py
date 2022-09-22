@@ -1,7 +1,7 @@
 import polib
 from utils.database import Database
 
-path = 'res/i18n.db'
+path = 'res/i18n.sqlite'
 mopath = 'res/global.mo'
 
 def create_i18n_db():

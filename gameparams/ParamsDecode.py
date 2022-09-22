@@ -32,7 +32,7 @@ def EncodeStrings(s_scr):
     return s_str.replace('\\x', '%').replace('\r', '').encode()
 
 try:
-    with open('gameparams.data', 'rb') as f:
+    with open('../res/GameParams.data', 'rb') as f:
         s = f.read()
 
     s_bin = EncodeStrings(s)

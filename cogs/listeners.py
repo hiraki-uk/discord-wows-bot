@@ -34,6 +34,7 @@ class Listener(commands.Cog):
 		if self.config['debug'] is True:
 			pass
 
+
 	@commands.Cog.listener()
 	async def on_member_remove(self, member):
 		self.logger.info(f'Member removed:{member.name} id:{member.id}')

@@ -3,7 +3,7 @@ from utils.database import Database
 
 from ..api.api import Api
 
-path = 'res/maps.db'
+path = 'res/maps.sqlite'
 def create_map_db():
     """
     Create maps.db file.

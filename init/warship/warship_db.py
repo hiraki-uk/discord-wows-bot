@@ -7,7 +7,7 @@ from ..gp.gp_db import GameparamsDB
 from ..i18n.i18n_db import I18NDb
 from .warship import Warship
 
-path = 'res/warships.db'
+path = 'res/warships.sqlite'
 
 
 def create_warships_db():

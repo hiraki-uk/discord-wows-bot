@@ -7,7 +7,6 @@ import asyncio
 from cogs.cogs import Cogs
 from cogs.listeners import Listener
 from cogs.maps import MapsCog
-from cogs.pdf2image import Pdf2Image
 from cogs.roles import Roles
 from cogs.shitposting import Shitposting
 from cogs.vc import VoiceChannel
@@ -20,24 +19,29 @@ mitsuba = Mitsuba()
 bot = mitsuba.bot
 key = mitsuba.config['discord_bot_key']
 
-add_cogs(bot,
-	Cogs(mitsuba),
-	Roles(mitsuba),
-	# Pdf2Image(mitsuba),
-	Listener(mitsuba),
-	MapsCog(mitsuba),
-	Shitposting(mitsuba),
-	VoiceChannel(mitsuba),
-	Weather(mitsuba),
-	WowsCog(mitsuba),
-)
+
+async def main(mitsuba, key):
+	async with mitsuba.bot:
+		await add_cogs(mitsuba.bot,
+				Cogs(mitsuba),
+				Roles(mitsuba),
+				Listener(mitsuba),
+				MapsCog(mitsuba),
+				Shitposting(mitsuba),
+				VoiceChannel(mitsuba),
+				Weather(mitsuba),
+				WowsCog(mitsuba),
+			)
+		await mitsuba.bot.start(key)
+
+
 if __name__ == '__main__':
-	loop = asyncio.get_event_loop()
+	loop = asyncio.new_event_loop()
 	try:
 		loop.run_until_complete(
-				mitsuba.bot.start(key)
+			main(mitsuba, key)
 		)
 	except KeyboardInterrupt:
-		loop.run_until_complete(mitsuba.bot.logout())
+		loop.run_until_complete(mitsuba.bot.close())
 	finally:
 		loop.close()

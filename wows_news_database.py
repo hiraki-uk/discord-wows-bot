@@ -4,7 +4,7 @@ from database.db_manager import Database_manager
 
 
 if __name__ == '__main__':
-	db = Database_manager('database/wows.db')
+	db = Database_manager('database/wows.sqlite')
 
 	loop = asyncio.get_event_loop()
 	try:

@@ -23,7 +23,7 @@ class WowsCog(commands.Cog):
 			await ctx.send('どのぽふねのデータがほしいの？ うむらると？気合でやって')
 			return
 		elif name == 'sia' or name == 'しあ':
-			await ctx.send('うるせえ！')
+			await ctx.send('こー－－－－－－－－－－－－－かさすおー－－－－－－－－－－－－－－－かぶと！！！！！！！！！！！！！！！！！！')
 			return
 		result = self.db.get_image(name)
 		if not result:

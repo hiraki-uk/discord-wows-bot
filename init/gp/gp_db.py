@@ -6,7 +6,7 @@ from .artillery import Artillery
 from .module import Module
 from ..warship.warship import Warship
 
-db_path = 'res/gameparams.db'
+db_path = 'res/gameparams.sqlite'
 id_api_db_path = 'res/id_api.sqlite'
 gp_json_path = 'res/gameparams.json'
 
@@ -14,20 +14,20 @@ gp_json_path = 'res/gameparams.json'
 def create_gp_db():
 	with open(gp_json_path, 'r') as f:
 		s = f.read()
-	s_json = json.loads(s)[0]
+	s_json : dict = json.loads(s)[0]
 	# get table names
-	species = []
-	for _, value in s_json.items():
+	species = ['None']
+	for value in s_json.values():
 		temp = value['typeinfo']
 		for key1, value1 in temp.items():
-			if key1 == 'species':
-				if value1 not in species:
-					# if none use string none
-					if value1 is None:
-						if 'None' not in species:
-							species.append('None')               
-					else:
-						species.append(value1)
+			if key1 != 'species':
+				continue
+			if value1 in species:
+				continue
+			if value1 is None:
+				continue
+			else:
+				species.append(value1)
 	# for storing raw data
 	db = GameparamsDB()
 	db.init_db(species)
