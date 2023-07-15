@@ -1,7 +1,9 @@
 import datetime
 from random import random
 
+import requests
 from discord.ext import commands, tasks
+
 from init.bot_setup import Mitsuba
 from utils.fourFn import calc
 from utils.logger import Logger
@@ -89,6 +91,11 @@ class Cogs(commands.Cog):
 		mes = f'いい感じ!!(自社調べ)\n{str(emoji)}'
 		await ctx.send(mes)
 
+	@commands.command()
+	async def minecraft(self, ctx):
+		""" マイクラサーバーのIPを教えるよ！ """
+		res = requests.get('https://ifconfig.me')
+		await ctx.send(f'はい！\r\n{res.text}:1919')
 
 	# @commands.command()
 	# async def slot(self, ctx):
